@@ -27,10 +27,10 @@ namespace APINegocio.Aplications.Authentication.Repository
         {
             var loginUser = await _APINegocioDbContext.Users.FirstOrDefaultAsync(e => e.Email == Email);
             if (loginUser == null)
-                return null!;
+                return null;
 
-            if (!VerificarPasswordHash(password, loginUser.PasswordHash!, loginUser.PasswordSalt!))
-                return null!;
+            if (!VerificarPasswordHash(password, loginUser.PasswordHash, loginUser.PasswordSalt))
+                return null;
 
             return loginUser;
         }

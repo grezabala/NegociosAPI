@@ -28,7 +28,7 @@ namespace APINegocio.API.Controllers
         }
 
 
-        [HttpPost("{Register}")]
+        [HttpPost("register")]
         public async Task<IActionResult> Register(UsersRegisterDto modelDto)
         {
 
@@ -45,22 +45,24 @@ namespace APINegocio.API.Controllers
             return Ok(userCreatedDto);
         }
 
-        [HttpPost("{Login}")]
+        [HttpPost("Login")]
         public async Task<IActionResult> Login(UsersLoginDto modelLoginDto)
         {
-            var userFromRepo = await _AuthenticationAIPNegocio.Login(modelLoginDto.Email!, modelLoginDto.PasswordUser!);
+            var userFromRepo = await _AuthenticationAIPNegocio.Login(modelLoginDto.Email, modelLoginDto.PasswordUser);
             if (userFromRepo == null)
                 return Unauthorized();
 
-            var userMap = _Mapper.Map<UsersListDto>(modelLoginDto);
+            var userMap = _Mapper.Map<UsersListDto>(userFromRepo);
             var tokenSer = _TokenServices.CreateToken(userFromRepo);
 
             //Retornar un nuevo objeto con userMap y tokenSer
             return Ok(new
             {
-                tokenSer = tokenSer,
                 userMap = userMap,
+                tokenSer = tokenSer
+
             });
+           
         }
 
     }
