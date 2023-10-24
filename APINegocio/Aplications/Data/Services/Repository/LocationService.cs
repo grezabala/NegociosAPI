@@ -3,6 +3,7 @@ using APINegocio.Aplications.Data.Services.Interfaz;
 using APINegocio.Aplications.Entities;
 using APINegocio.Aplications.Services.Interfaz.IContext;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace APINegocio.Aplications.Data.Services.Repository
 {
@@ -96,5 +97,7 @@ namespace APINegocio.Aplications.Data.Services.Repository
         }
         #endregion
 
+
+      
     }
 }

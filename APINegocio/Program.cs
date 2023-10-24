@@ -1,7 +1,11 @@
 using APINegocio.Aplications.Data_Sqlite;
 using APINegocio.Aplications.IoCExtensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
 
 
 //IConfiguration Configuration; 
@@ -28,7 +32,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "APINegocio.API", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "APINegocio", Version = "v1" });
 
     c.AddSecurityDefinition("Users", new OpenApiSecurityScheme
     {
@@ -58,7 +62,23 @@ builder.Services.AddSwaggerGen(c =>
     c.AddSecurityRequirement(security);
 });
 
+//Configuracion para el Token
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(op =>
+    {
+        op.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["TokenKey"])),
+            ValidateIssuer = false,
+            ValidateAudience = false,
 
+        };
+
+    });
+
+builder.Services.AddAuthorizationCore();
+builder.Services.AddAuthenticationCore();
 
 var app = builder.Build();
 
@@ -69,10 +89,21 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "APINegocio.API v1"));
 }
 
-app.UseAuthorization();
+app.MapControllers();
+
+app.UseRouting();
+
 app.UseAuthentication();
 
-app.MapControllers();
+app.UseAuthorization();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
+
+
+
 
 app.Run();
 
@@ -84,7 +115,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.TokenAPINegocio(Configuration);
+//builder.Services.TokenAPINegocio(Configuration);
 
 #region VER
 /*

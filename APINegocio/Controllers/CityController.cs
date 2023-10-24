@@ -9,9 +9,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace APINegocio.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+   
     public class CityController : ControllerBase
     {
         private readonly ILocationService _LocationService;

@@ -119,11 +119,17 @@ namespace APINegocio.Migrations
                         .IsUnicode(false)
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("IsDeletedAt")
+                    b.Property<DateTime?>("IsDeletedAt")
+                        .IsRequired()
                         .IsUnicode(false)
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("IsUpdateAt")
+                    b.Property<bool>("IsStatus")
+                        .IsUnicode(false)
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("IsUpdateAt")
+                        .IsRequired()
                         .IsUnicode(false)
                         .HasColumnType("datetime2");
 
@@ -159,13 +165,24 @@ namespace APINegocio.Migrations
                         .IsUnicode(false)
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("IsDeletedAt")
+                    b.Property<DateTime?>("IsDeletedAt")
+                        .IsRequired()
                         .IsUnicode(false)
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsRecurring")
+                    b.Property<bool?>("IsRecurring")
+                        .IsRequired()
                         .IsUnicode(false)
                         .HasColumnType("bit");
+
+                    b.Property<bool>("IsStatud")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsUpdated")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("IsUpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Note")
                         .IsRequired()
@@ -320,13 +337,13 @@ namespace APINegocio.Migrations
                         .IsUnicode(false)
                         .HasColumnType("int");
 
-                    b.Property<int>("ProductosProductId")
+                    b.Property<int?>("ProductosProductId")
                         .HasColumnType("int");
 
                     b.Property<int>("TickerId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TickersTickerId")
+                    b.Property<int?>("TickersTickerId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("TotalDescout")
@@ -401,7 +418,6 @@ namespace APINegocio.Migrations
                         .HasColumnType("varchar(30)");
 
                     b.Property<string>("OrderName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("SenderId")
@@ -455,12 +471,16 @@ namespace APINegocio.Migrations
                         .IsUnicode(false)
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("IsDeletedAt")
+                    b.Property<DateTime?>("IsDeletedAt")
+                        .IsRequired()
                         .IsUnicode(false)
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsRefund")
                         .IsUnicode(false)
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsStatud")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsUpdated")
@@ -523,7 +543,7 @@ namespace APINegocio.Migrations
                         .IsUnicode(false)
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("IsDateModified")
+                    b.Property<DateTime?>("IsDateModified")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsDeleted")
@@ -548,7 +568,6 @@ namespace APINegocio.Migrations
                         .HasColumnType("varchar(250)");
 
                     b.Property<string>("Referencia")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ProductId");
@@ -786,9 +805,11 @@ namespace APINegocio.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StoresId"));
 
-                    b.Property<bool>("AceptPyments")
+                    b.Property<string>("AceptPyments")
+                        .IsRequired()
+                        .HasMaxLength(20)
                         .IsUnicode(false)
-                        .HasColumnType("bit");
+                        .HasColumnType("varchar(20)");
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -803,13 +824,11 @@ namespace APINegocio.Migrations
                         .HasColumnType("varchar(550)");
 
                     b.Property<string>("FacebookAccount")
-                        .IsRequired()
                         .HasMaxLength(250)
                         .IsUnicode(false)
                         .HasColumnType("varchar(250)");
 
                     b.Property<string>("InstagramAccount")
-                        .IsRequired()
                         .HasMaxLength(250)
                         .IsUnicode(false)
                         .HasColumnType("varchar(250)");
@@ -830,14 +849,16 @@ namespace APINegocio.Migrations
                         .IsUnicode(false)
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsStatud")
+                        .IsUnicode(false)
+                        .HasColumnType("bit");
+
                     b.Property<string>("Latitud")
-                        .IsRequired()
                         .HasMaxLength(250)
                         .IsUnicode(false)
                         .HasColumnType("varchar(250)");
 
                     b.Property<string>("Longitud")
-                        .IsRequired()
                         .HasMaxLength(250)
                         .IsUnicode(false)
                         .HasColumnType("varchar(250)");
@@ -917,7 +938,7 @@ namespace APINegocio.Migrations
                         .IsUnicode(false)
                         .HasColumnType("int");
 
-                    b.Property<int>("CustomersCustomerId")
+                    b.Property<int?>("CustomersCustomerId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("DateImprect")
@@ -970,7 +991,7 @@ namespace APINegocio.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<int>("ProductosProductId")
+                    b.Property<int?>("ProductosProductId")
                         .HasColumnType("int");
 
                     b.Property<int>("RNC")
@@ -1047,11 +1068,9 @@ namespace APINegocio.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<byte[]>("PasswordHash")
-                        .IsRequired()
                         .HasColumnType("varbinary(max)");
 
                     b.Property<byte[]>("PasswordSalt")
-                        .IsRequired()
                         .HasColumnType("varbinary(max)");
 
                     b.Property<string>("UserName")
@@ -1209,15 +1228,11 @@ namespace APINegocio.Migrations
                 {
                     b.HasOne("APINegocio.Aplications.Entities.Productos", "Productos")
                         .WithMany()
-                        .HasForeignKey("ProductosProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProductosProductId");
 
                     b.HasOne("APINegocio.Aplications.Entities.Tickers", "Tickers")
                         .WithMany("DetalleTickers")
-                        .HasForeignKey("TickersTickerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("TickersTickerId");
 
                     b.Navigation("Productos");
 
@@ -1242,15 +1257,11 @@ namespace APINegocio.Migrations
                 {
                     b.HasOne("APINegocio.Aplications.Entities.Customers", "Customers")
                         .WithMany()
-                        .HasForeignKey("CustomersCustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CustomersCustomerId");
 
                     b.HasOne("APINegocio.Aplications.Entities.Productos", "Productos")
                         .WithMany()
-                        .HasForeignKey("ProductosProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProductosProductId");
 
                     b.Navigation("Customers");
 

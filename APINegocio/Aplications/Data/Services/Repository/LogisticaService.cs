@@ -3,6 +3,7 @@ using APINegocio.Aplications.Data.Services.Interfaz;
 using APINegocio.Aplications.Entities;
 using APINegocio.Aplications.Services.Interfaz.IContext;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace APINegocio.Aplications.Services.Repository
 {
@@ -10,7 +11,7 @@ namespace APINegocio.Aplications.Services.Repository
     {
 
         private readonly APINegociosDbContext _Db;
-
+        private readonly APINegociosDbContext _APINegociosDb;
         public LogisticaService(APINegociosDbContext dbContext)
         {
             _Db = dbContext;
@@ -178,6 +179,102 @@ namespace APINegocio.Aplications.Services.Repository
         {
             var getByIdToquen = await _Db.Payments.FirstOrDefaultAsync(x => x.Toquen == toquen);
             return getByIdToquen!;
+        }
+        #endregion
+
+        #region INVENTORY METHOD
+        public async Task<IEnumerable<Inventory>> GetInventoryAsync()
+        {
+            try
+            {
+                var getInventory = (from inv in _APINegociosDb.Inventory
+                                    select inv).ToListAsync();
+
+                return await getInventory;
+            }
+            catch (WebException ex)
+            {
+
+                throw ex;
+            }
+
+        }
+
+        public async Task<IEnumerable<Inventory>> GetByIdInventory(int Id)
+        {
+            try
+            {
+                var getById = (from getId in _APINegociosDb.Inventory
+                               where getId.InventoryId == Id
+                               select getId).ToListAsync();
+
+                return await getById;
+            }
+            catch (WebException ex)
+            {
+
+                throw ex;
+            }
+
+        }
+
+        public async Task<IEnumerable<Inventory>> GetByCodeInventory(string code)
+        {
+            try
+            {
+                var getCode = _APINegociosDb.Inventory.Where(c => c.CodigoInventory.Any(char.IsLetterOrDigit) &&
+                c.CodigoInventory.Contains(code)).ToListAsync();
+
+                return await getCode;
+            }
+            catch (WebException ex)
+            {
+
+                throw ex;
+            }
+
+        }
+
+        public async Task<IEnumerable<Inventory>> GetByNameInventory(string name)
+        {
+            try
+            {
+                var getByName = _APINegociosDb.Set<Inventory>().Where(e => e.InventoryName.Any(char.IsLetterOrDigit)
+                && e.InventoryName.Contains(name)).ToListAsync();
+
+                return await getByName;
+
+                //var getByName = (from getName in _APINegociosDb.Inventory
+                //                 where getName.InventoryName == name
+                //                 select getName).ToListAsync();
+
+                //return await getByName;
+            }
+            catch (WebException ex)
+            {
+
+                throw ex;
+            }
+        }
+        public async Task<IEnumerable<Inventory>> GetByNumberInventories(int number)
+        {
+            try
+            {
+                // var getByNumber = _APINegociosDb.Set<Inventory>().Where(e => e.NumberInventory.Any(char.IsLetterOrDigit)
+                //&& e.NumberInventory.Contains(number))
+
+                var getNumber = (from num in _APINegociosDb.Inventory
+                                 where num.NumberInventory == number
+                                 select num).ToListAsync();
+
+                return await getNumber;
+            }
+            catch (WebException ex)
+            {
+
+                throw ex;
+            }
+
         }
         #endregion
     }

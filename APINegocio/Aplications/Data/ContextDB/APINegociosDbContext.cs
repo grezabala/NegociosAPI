@@ -30,6 +30,7 @@ namespace APINegocio.Aplications.Data.ContextDB
         public virtual DbSet<Countries> Countries { get; set; }
         public virtual DbSet<Payments> Payments { get; set; }
         public virtual DbSet<Stores> Stores { get; set; }
+        public virtual DbSet<Inventory> Inventory { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

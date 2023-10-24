@@ -77,7 +77,6 @@ namespace APINegocio.Aplications.Services.Repository
         {
             var getUser = await _APINegocioDbContext.Users.ToListAsync();
             return getUser;
-
         }
 
         public async Task<Users> GetUsersByIdAsync(int Id)

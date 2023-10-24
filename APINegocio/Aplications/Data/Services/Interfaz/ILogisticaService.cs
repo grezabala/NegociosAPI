@@ -42,5 +42,12 @@ namespace APINegocio.Aplications.Data.Services.Interfaz
         Task<IEnumerable<Payments>> GetPayments();
         Task<Payments> GetPaymentsByIdAsync(int Id);
         Task<Payments> GetPaymentsByToquenAsync(string toquen);
+
+        //INVENTORY
+        Task<IEnumerable<Inventory>> GetInventoryAsync();
+        Task<IEnumerable<Inventory>> GetByIdInventory(int Id);
+        Task<IEnumerable<Inventory>> GetByCodeInventory(string code);
+        Task<IEnumerable<Inventory>> GetByNameInventory(string name);
+        Task<IEnumerable<Inventory>> GetByNumberInventories(int number);    
     }
 }

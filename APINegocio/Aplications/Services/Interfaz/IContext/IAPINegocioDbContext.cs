@@ -18,6 +18,6 @@ namespace APINegocio.Aplications.Services.Interfaz.IContext
         DbSet<Countries> Countries { get; set; }
         DbSet<Payments> Payments { get; set; }
         DbSet<Stores> Stores { get; set; }
-
+        DbSet<Inventory> Inventory { get; set; }
     }
 }

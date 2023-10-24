@@ -10,7 +10,7 @@
         public DateTime? IsDeletedAt { get; set; }
         public bool IsUpdated { get; set; }
         public DateTime? IsUpdateAt { get; set; }
-        public bool IsStatu { get; set; }
+        public bool IsStatus { get; set; }
 
     }
 }

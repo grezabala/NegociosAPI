@@ -48,6 +48,10 @@ namespace APINegocio.Aplications.Configuration
             builder.Property(x => x.IsUpdated)
                 .IsUnicode(false)
                 .IsRequired();
+
+            builder.Property(x => x.IsStatus)
+                .IsUnicode(false)
+                .IsRequired();
       
         }
     }

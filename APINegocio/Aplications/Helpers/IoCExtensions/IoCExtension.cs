@@ -24,7 +24,7 @@ namespace APINegocio.Aplications.IoCExtensions
         //Configuration service Token
         public static IServiceCollection TokenAPINegocio(this IServiceCollection services, IConfiguration configuration)
         {
-            _ = services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(op =>
             {
                 op.TokenValidationParameters = new TokenValidationParameters
