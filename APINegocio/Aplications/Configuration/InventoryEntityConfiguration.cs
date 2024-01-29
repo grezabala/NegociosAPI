@@ -7,7 +7,7 @@ namespace APINegocio.Aplications.Configuration
     {
         public InventoryEntityConfiguration()
         {
-            TableName = typeof(Inventory).Name;
+            TableName = "Inventory"; //typeof(Inventory).Name;
         }
 
         public override void Configure(EntityTypeBuilder<Inventory> builder)

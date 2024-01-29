@@ -1,4 +1,5 @@
 using APINegocio.Aplications.Data_Sqlite;
+using APINegocio.Aplications.Helpers.Filters;
 using APINegocio.Aplications.IoCExtensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -42,6 +43,8 @@ builder.Services.AddSwaggerGen(c =>
         Description = "Authorization Key",
 
     });
+
+    c.OperationFilter<AuthResponsesOperationFilter>();
 
     var security = new OpenApiSecurityRequirement{
         {
@@ -97,12 +100,12 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
+app.UseStatusCodePages();
+
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
 });
-
-
 
 
 app.Run();

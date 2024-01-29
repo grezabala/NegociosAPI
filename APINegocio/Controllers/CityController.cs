@@ -62,7 +62,6 @@ namespace APINegocio.Controllers
         public async Task<IActionResult> Post([FromBody] CityPOSTDto modelDto)
         {
             var addCity = Mapper.Map<City>(modelDto);
-
             _LocationService.Add(addCity);
 
             if (await _LocationService.SaveAll())

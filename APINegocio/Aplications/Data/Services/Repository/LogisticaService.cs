@@ -195,7 +195,7 @@ namespace APINegocio.Aplications.Services.Repository
             catch (WebException ex)
             {
 
-                throw ex;
+                throw ex.InnerException;
             }
 
         }
@@ -213,7 +213,7 @@ namespace APINegocio.Aplications.Services.Repository
             catch (WebException ex)
             {
 
-                throw ex;
+                throw ex.InnerException;
             }
 
         }
@@ -230,7 +230,7 @@ namespace APINegocio.Aplications.Services.Repository
             catch (WebException ex)
             {
 
-                throw ex;
+                throw ex.GetBaseException();
             }
 
         }
@@ -253,7 +253,7 @@ namespace APINegocio.Aplications.Services.Repository
             catch (WebException ex)
             {
 
-                throw ex;
+                throw ex.GetBaseException();
             }
         }
         public async Task<IEnumerable<Inventory>> GetByNumberInventories(int number)
@@ -272,7 +272,7 @@ namespace APINegocio.Aplications.Services.Repository
             catch (WebException ex)
             {
 
-                throw ex;
+                throw ex.InnerException;
             }
 
         }

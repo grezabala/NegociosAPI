@@ -4,6 +4,7 @@ using APINegocio.Aplications.Data.ContextDB;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace APINegocio.Migrations
 {
     [DbContext(typeof(APINegociosDbContext))]
-    partial class APINegociosDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231111175846_NuevaNegocioDb")]
+    partial class NuevaNegocioDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

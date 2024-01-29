@@ -40,6 +40,8 @@ namespace APINegocio.Controllers
         public async Task<IActionResult> Get()
         {
             var getCustomer = await _LogiticaServices.GetCliente();
+            if (getCustomer == null)
+                return NotFound();         
             return Ok(getCustomer);
         }
 

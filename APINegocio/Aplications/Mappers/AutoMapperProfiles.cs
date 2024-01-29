@@ -65,6 +65,12 @@ namespace APINegocio.Aplications.Mappers
 
             //PUT/TICKERS
             CreateMap<TickersPUTDto, Tickers>();
+
+            //POST/Inventory
+            CreateMap<InventoryPOSTDto, Inventory>();
+
+            //PUT/Inventory
+            CreateMap<InventoryPUTDto, Inventory>();
         }
     }
 }

@@ -19,10 +19,10 @@
         public DateTime IsDeletedAt { get; set; }
         public bool IsUpdated { get; set; }
         public DateTime IsUpdatedAt { get; set; }
-        public Proveedores Proveedores { get; set; }
-        public Productos Proveedos { get; set; }
-        public Shopping Shopping { get; set; }
-        public Stores Stores { get; set; }
+        public virtual Proveedores Proveedores { get; set; }
+        public virtual Productos Proveedos { get; set; }
+        public virtual Shopping Shopping { get; set; }
+        public virtual Stores Stores { get; set; }
        
     }
 }
