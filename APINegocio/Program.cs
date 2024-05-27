@@ -2,6 +2,7 @@ using APINegocio.Aplications.Data_Sqlite;
 using APINegocio.Aplications.Helpers.Filters;
 using APINegocio.Aplications.IoCExtensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -16,11 +17,11 @@ var builder = WebApplication.CreateBuilder(args);
 var Configuration = builder.Configuration;
 
 //CONNECTION A SQLITE
-builder.Services.AddDbContext<DataDbContext>(x =>
-{
-    x.UseLazyLoadingProxies();
-    x.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
-});
+//builder.Services.AddDbContext<DataDbContext>(x =>
+//{
+//    x.UseLazyLoadingProxies();
+//    x.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
+//});
 
 
 // Add services to the container.
@@ -28,9 +29,15 @@ builder.Services.AddDbContext<DataDbContext>(x =>
 builder.Services.ConfigurationServicesDb(Configuration);
 builder.Services.AddAPINegocioService();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.CacheProfiles.Add("Default30Seg", new CacheProfile() { Duration = 45 });
+
+}).AddNewtonsoftJson();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "APINegocio", Version = "v1" });

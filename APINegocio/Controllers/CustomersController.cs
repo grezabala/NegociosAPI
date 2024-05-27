@@ -22,7 +22,12 @@ namespace APINegocio.Controllers
             _Mapper = mapper;
         }
 
-        [HttpDelete("{Id}")]
+        [HttpDelete("Id/{Id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Deleted(int Id)
         {
             var deletedCustomer = await _LogiticaServices.GetCustomersByIdAsync(Id);
@@ -36,7 +41,11 @@ namespace APINegocio.Controllers
             return Ok("EL CLIENTE FUE ELIMINADO CORRECTAMENTE");
         }
 
+        [AllowAnonymous]
         [HttpGet]
+        [ResponseCache(CacheProfileName = "Default30Seg")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Get()
         {
             var getCustomer = await _LogiticaServices.GetCliente();
@@ -45,7 +54,13 @@ namespace APINegocio.Controllers
             return Ok(getCustomer);
         }
 
-        [HttpGet("{Id}")]
+        [AllowAnonymous]
+        [HttpGet("Id")]
+        [ResponseCache(CacheProfileName = "Default30Seg")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get(int Id)
         {
             var getCustomerById = await _LogiticaServices.GetCustomersByIdAsync(Id);
@@ -55,7 +70,13 @@ namespace APINegocio.Controllers
             return Ok(getCustomerById);
         }
 
-        [HttpGet("name/{name}")]
+        [AllowAnonymous]
+        [HttpGet("name")]
+        [ResponseCache(CacheProfileName = "Default30Seg")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get(Customers model) 
         {
             var getCustomerName = await _LogiticaServices.GetCustomersByNameAsync(model.CustomerName);
@@ -67,6 +88,11 @@ namespace APINegocio.Controllers
 
 
         [HttpPost]
+        [ProducesResponseType(201, Type = typeof(CustomerPOSTDto))]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> POST(CustomerPOSTDto modelDto)
         {
             var postCustomer = _Mapper.Map<Customers>(modelDto);
@@ -77,7 +103,11 @@ namespace APINegocio.Controllers
             return BadRequest();
         }
 
-        [HttpPut("{Id}")]
+        [HttpPut("Id/{Id}")]
+        [ProducesResponseType(201, Type = typeof(BranchOfficesPUTDto))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> PUT(int Id, CustomerPUTDto modelDto)
         {
             if (Id != modelDto.CustomerId)

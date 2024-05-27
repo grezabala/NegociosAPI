@@ -11,7 +11,7 @@ namespace APINegocio.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+
     public class CountriesController : ControllerBase
     {
         private readonly ILocationService _LocationService;
@@ -23,8 +23,13 @@ namespace APINegocio.Controllers
             Mapper = mapper;
         }
 
+
         // GET: api/<CountriesController>
-        [HttpGet]
+        [AllowAnonymous]
+        [HttpGet]        
+        [ResponseCache(CacheProfileName = "Default30Seg")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Get()
         {
             var getCountry = await _LocationService.GetCountries();
@@ -35,7 +40,11 @@ namespace APINegocio.Controllers
         }
 
         // GET api/<CountriesController>/5
-        [HttpGet("{Id}")]
+        [AllowAnonymous]
+        [HttpGet("Id")]
+        [ResponseCache(CacheProfileName = "Default30Seg")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Get(int Id)
         {
             var getByIdCountry = await _LocationService.GetByIdCountriesAsync(Id);
@@ -46,7 +55,11 @@ namespace APINegocio.Controllers
         }
 
         // GET api/<CountriesController>/5
+        [AllowAnonymous]
         [HttpGet("name/{name}")]
+        [ResponseCache(CacheProfileName = "Default30Seg")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Get(Countries name)
         {
             var getByNameCountry = await _LocationService.GetByNameCountrieAsync(name.CountryName);
@@ -58,6 +71,12 @@ namespace APINegocio.Controllers
 
         // POST api/<CountriesController>
         [HttpPost]
+        [ProducesResponseType(201, Type = typeof(CountriesPOSTDto))]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [Authorize]
         public async Task<IActionResult> Post([FromBody] CountriesPOSTDto modelDto)
         {
             var addCountry = Mapper.Map<Countries>(modelDto);
@@ -71,11 +90,16 @@ namespace APINegocio.Controllers
         }
 
         // PUT api/<CountriesController>/5
-        [HttpPut("{id}")]
+        [HttpPut("Id/{Id}")]
+        [ProducesResponseType(201, Type = typeof(CountriesPUTDto))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [Authorize]
         public async Task<IActionResult> Put(int Id, [FromBody] CountriesPUTDto modelDto)
         {
 
-            if(Id != modelDto.CountryId)
+            if (Id != modelDto.CountryId)
                 return BadRequest("ERROR!... EL ID QUE ACABA DE INGRESAR NO COINCIDE CON NINGUN PAIS");
 
             var getByIdCountry = await _LocationService.GetByIdCountriesAsync(Id);
@@ -84,22 +108,28 @@ namespace APINegocio.Controllers
 
             Mapper.Map(getByIdCountry, modelDto);
 
-            if(await _LocationService.SaveAll())
+            if (await _LocationService.SaveAll())
                 return NoContent();
 
             return Ok(getByIdCountry);
         }
 
         // DELETE api/<CountriesController>/5
-        [HttpDelete("{id}")]
+        [HttpDelete("Id/{Id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [Authorize]
         public async Task<IActionResult> Delete(int Id)
         {
             var getById = await _LocationService.GetByIdCountriesAsync(Id);
-            if(getById == null)
+            if (getById == null)
                 return NotFound();
 
             _LocationService.Remove(getById);
-            if(!await _LocationService.SaveAll())
+            if (!await _LocationService.SaveAll())
                 return BadRequest("ERROR!" + "NO ES POSIBLE ELIMINAR EL PAIS");
             return Ok(getById);
 

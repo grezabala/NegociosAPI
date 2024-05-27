@@ -19,5 +19,6 @@ namespace APINegocio.Aplications.Services.Interfaz.IContext
         DbSet<Payments> Payments { get; set; }
         DbSet<Stores> Stores { get; set; }
         DbSet<Inventory> Inventory { get; set; }
+        DbSet<BranchOffices> BranchOffices { get; set; }
     }
 }

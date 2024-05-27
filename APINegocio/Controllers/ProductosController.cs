@@ -25,7 +25,12 @@ namespace APINegocio.API.Controllers
             this._RepositoryService = repositoryService;
         }
 
-        [HttpDelete("{Id}")]
+        [HttpDelete("Id/{Id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Delete(int Id)
         {
             var deleteProducto = await _RepositoryService.GetProductosByIdAsync(Id);
@@ -39,14 +44,24 @@ namespace APINegocio.API.Controllers
             return Ok("EL PRODUCTO FUE ELIMINADO CORRECTAMENTE");
         }
 
+        [AllowAnonymous]
         [HttpGet]
+        [ResponseCache(CacheProfileName = "Default30Seg")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Get()
         {
             var getProductos = await _RepositoryService.GetProductos();
             return Ok(getProductos);
         }
 
-        [HttpGet("{Id}")]
+        [AllowAnonymous]
+        [HttpGet("Id")]
+        [ResponseCache(CacheProfileName = "Default30Seg")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get(int Id)
         {
             var getById = await _RepositoryService.GetProductosByIdAsync(Id);
@@ -57,7 +72,13 @@ namespace APINegocio.API.Controllers
             return Ok(getById);
         }
 
+        [AllowAnonymous]
         [HttpGet("name/{name}")] //Ruta personalizada para evitar la ambiguedad entre metodo
+        [ResponseCache(CacheProfileName = "Default30Seg")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get(Productos model)
         {
             var getName = await _RepositoryService.GetProveedoresByNameAsync(model.ProductName);
@@ -69,6 +90,11 @@ namespace APINegocio.API.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(201, Type = typeof(ProductosPOSTDto))]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Post(ProductosPOSTDto modelDto)
         {
             #region CODIGO EN CASO DE QUE NO SE VAYA IMPLEMENTAR MAPPER
@@ -94,7 +120,11 @@ namespace APINegocio.API.Controllers
             return BadRequest();
         }
 
-        [HttpPut("{Id}")]
+        [HttpPut("Id/{Id}")]
+        [ProducesResponseType(201, Type = typeof(ProductoPUTDto))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Put(int Id, [FromBody] ProductoPUTDto modelDto)
         {
 

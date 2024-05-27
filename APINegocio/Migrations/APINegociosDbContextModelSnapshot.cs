@@ -90,6 +90,128 @@ namespace APINegocio.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("APINegocio.Aplications.Entities.BranchOffices", b =>
+                {
+                    b.Property<int>("BranchId")
+                        .ValueGeneratedOnAdd()
+                        .IsUnicode(false)
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BranchId"));
+
+                    b.Property<string>("BranchOfficesCode")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(30)");
+
+                    b.Property<string>("BranchOfficesName")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(250)");
+
+                    b.Property<string>("Contacts")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(80)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(550)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(550)");
+
+                    b.Property<string>("Direccion")
+                        .IsRequired()
+                        .HasMaxLength(350)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(350)");
+
+                    b.Property<string>("FacebookAccount")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(250)");
+
+                    b.Property<string>("InstagramAccount")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(250)");
+
+                    b.Property<DateTime>("IsCreadAt")
+                        .IsUnicode(false)
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsCreadBy")
+                        .IsUnicode(false)
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("IsDeletedAt")
+                        .IsUnicode(false)
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeletedBy")
+                        .IsUnicode(false)
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsStatud")
+                        .IsUnicode(false)
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("IsUpdatedAt")
+                        .IsUnicode(false)
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsUpdatedBy")
+                        .IsUnicode(false)
+                        .HasColumnType("bit");
+
+                    b.Property<float>("Latitud")
+                        .IsUnicode(false)
+                        .HasColumnType("real");
+
+                    b.Property<float>("Longitud")
+                        .IsUnicode(false)
+                        .HasColumnType("real");
+
+                    b.Property<string>("OtherNumber")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(80)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(80)");
+
+                    b.Property<string>("Referencia")
+                        .IsRequired()
+                        .HasMaxLength(550)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(550)");
+
+                    b.Property<string>("WebSite")
+                        .IsRequired()
+                        .HasMaxLength(350)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(350)");
+
+                    b.Property<string>("WhatsAppNumber")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(250)");
+
+                    b.HasKey("BranchId");
+
+                    b.ToTable("BranchOffices", (string)null);
+                });
+
             modelBuilder.Entity("APINegocio.Aplications.Entities.City", b =>
                 {
                     b.Property<int>("CityId")

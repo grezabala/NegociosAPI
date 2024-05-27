@@ -22,7 +22,12 @@ namespace APINegocio.API.Controllers
             _Mapper = mapper;
         }
 
-        [HttpDelete("{Id}")]
+        [HttpDelete("Id/{Id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Delete(int id)
         {
             var deletedShopping = await _LogiticaServices.GetShoppingByIdAsync(id);
@@ -36,14 +41,24 @@ namespace APINegocio.API.Controllers
             return Ok("LA COMPRA FUE ELIMINADA, SATISFACTORIAMENTE");
         }
 
+        [AllowAnonymous]
         [HttpGet]
+        [ResponseCache(CacheProfileName = "Default30Seg")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Get()
         {
             var get = await _LogiticaServices.GetShoppings();
             return Ok(get);
         }
 
-        [HttpGet("{Id}")]
+        [AllowAnonymous]
+        [HttpGet("Id")]
+        [ResponseCache(CacheProfileName = "Default30Seg")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get(int Id)
         {
             var getById = await _LogiticaServices.GetShoppingByIdAsync(Id);
@@ -54,7 +69,13 @@ namespace APINegocio.API.Controllers
 
         }
 
+        [AllowAnonymous]
         [HttpGet("number/{number}")]
+        [ResponseCache(CacheProfileName = "Default30Seg")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get(Shopping model)
         {
             var getNumber = await _LogiticaServices.GetShoppingByNumberShopping(model);
@@ -64,7 +85,14 @@ namespace APINegocio.API.Controllers
             return Ok(getNumber);
         }
 
+       
+        [AllowAnonymous] 
         [HttpGet("code/{code}")]
+        [ResponseCache(CacheProfileName = "Default30Seg")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetCode(Shopping model)
         {
             var getCode = await _LogiticaServices.GetShoppingByCodeAsync(model);
@@ -75,7 +103,12 @@ namespace APINegocio.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(ShoppingPOSTDto model)
+        [ProducesResponseType(201, Type = typeof(ShoppingPOSTDto))]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> Post([FromBody] ShoppingPOSTDto model)
         {
             var post = _Mapper.Map<Shopping>(model);
 
@@ -86,8 +119,12 @@ namespace APINegocio.API.Controllers
             return BadRequest();
         }
 
-        [HttpPut("{Id}")]
-        public async Task<IActionResult> Put(int Id, ShoppingPUTDto model) 
+        [HttpPut("Id/{Id}")]
+        [ProducesResponseType(201, Type = typeof(ShoppingPUTDto))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> Put(int Id, [FromBody] ShoppingPUTDto model) 
         {
          if(Id != model.ShoppingId)
                 return BadRequest("ERROR!... EL ID QUE ACABA DE INGRESAR NO COINCIDEN CON NINGUNA COMPRA");

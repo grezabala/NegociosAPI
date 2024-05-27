@@ -23,14 +23,24 @@ namespace APINegocio.Controllers
         }
 
 
+        [AllowAnonymous]
         [HttpGet]
+        [ResponseCache(CacheProfileName = "Default30Seg")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Get()
         {
             var getStores = await _LocationService.GetStores();
             return Ok(getStores);
         }
 
-        [HttpGet("{Id}")]
+        [AllowAnonymous]
+        [HttpGet("Id")]
+        [ResponseCache(CacheProfileName = "Default30Seg")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get(int Id)
         {
             var getByIdStore = await _LocationService.GetByIdStoresAsync(Id);
@@ -39,7 +49,14 @@ namespace APINegocio.Controllers
             return Ok(getByIdStore);
         }
 
+      
+        [AllowAnonymous]  
         [HttpGet("name/{name}")]
+        [ResponseCache(CacheProfileName = "Default30Seg")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get(Stores names)
         {
             var getByNameStore = await _LocationService.GetByNameStoresAsync(names.StoresName);
@@ -50,7 +67,12 @@ namespace APINegocio.Controllers
 
         }
 
-        [HttpDelete("{Id}")]
+        [HttpDelete("Id/{Id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Delete(int Id)
         {
             var getByIdStor = await _LocationService.GetByIdStoresAsync(Id);
@@ -66,7 +88,12 @@ namespace APINegocio.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> POST(StoresPOSTDto modelDto)
+        [ProducesResponseType(201, Type = typeof(StoresPOSTDto))]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> POST([FromBody] StoresPOSTDto modelDto)
         {
 
             var addStor = Mapper.Map<Stores>(modelDto);
@@ -78,8 +105,12 @@ namespace APINegocio.Controllers
             return BadRequest("ERROR!");
         }
 
-        [HttpPut("{Id}")]
-        public async Task<IActionResult> PUT(int Id, StoresPUTDto modelDto) 
+        [HttpPut("Id/{Id}")]
+        [ProducesResponseType(201, Type = typeof(StoresPUTDto))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> PUT(int Id, [FromBody] StoresPUTDto modelDto) 
         {
           
             if(Id != modelDto.StoresId)

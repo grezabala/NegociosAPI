@@ -1,5 +1,4 @@
-﻿using APINegocio.Aplications.Authentication.Interfaz;
-using APINegocio.Aplications.Authentication.Repository;
+﻿using APINegocio.Aplications.Authentication.Repository;
 using APINegocio.Aplications.Configuration;
 using APINegocio.Aplications.Mappers;
 using APINegocio.Aplications.Services;
@@ -14,6 +13,7 @@ using System.Text;
 using APINegocio.Aplications.Services.Interfaz.IContext;
 using APINegocio.Aplications.Data.Services.Interfaz;
 using APINegocio.Aplications.Data.Services.Repository;
+using APINegocio.Aplications.Authentication.Interfaz;
 
 namespace APINegocio.Aplications.IoCExtensions
 {
@@ -45,7 +45,7 @@ namespace APINegocio.Aplications.IoCExtensions
         {
             services.AddDbContext<APINegociosDbContext>(db =>
             {
-                db.UseSqlServer(@"Data Source=DESKTOP-KB2HUMF; Initial Catalog=NegocioDb; Integrated Security=True; MultipleActiveResultSets=True; Encrypt=False", sql =>
+                db.UseSqlServer(@"Data Source=(local); Initial Catalog=NegocioDb; Integrated Security=True; MultipleActiveResultSets=True; Encrypt=False", sql =>
                 {
                     sql.EnableRetryOnFailure();
                     sql.UseNetTopologySuite();
@@ -80,6 +80,7 @@ namespace APINegocio.Aplications.IoCExtensions
             services.AddScoped<IAuthenticationAIPNegocio, RepoAuthenticationAIPNegocio>();
             services.AddScoped(typeof(ILogisticaService), typeof(LogisticaService));
             services.AddScoped<ILocationService, LocationService>();
+            services.AddScoped(typeof(IBranchOfficesService), typeof(BranchOfficesService));
 
             services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly); //PARA LA INJENCCION DE AUTOMAPPER
 

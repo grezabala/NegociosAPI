@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace APINegocio.Migrations.DataDb
 {
-    [DbContext(typeof(DataDbContext))]
+    //[DbContext(typeof(DataDbContext))]
     [Migration("20230910184657_IniticialDBNegocio")]
     partial class IniticialDBNegocio
     {

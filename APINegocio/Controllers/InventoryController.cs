@@ -23,10 +23,14 @@ namespace APINegocio.Controllers
             Mapper = mapper;
         }
 
+        [AllowAnonymous]
         [HttpGet]
+        [ResponseCache(CacheProfileName = "Default30Seg")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [Authorize]
         public async Task<IActionResult> Get()
         {
-
             try
             {
                 var get = await _LogisticaService.GetInventoryAsync();
@@ -42,7 +46,14 @@ namespace APINegocio.Controllers
 
         }
 
+        [AllowAnonymous]    
         [HttpGet("Id/{Id}")]
+        [ResponseCache(CacheProfileName = "Default30Seg")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize]
         public async Task<IActionResult> Get([FromBody] int Id)
         {
 
@@ -61,7 +72,14 @@ namespace APINegocio.Controllers
 
         }
 
+        [AllowAnonymous]
         [HttpGet("number/{number}")]
+        [ResponseCache(CacheProfileName = "Default30Seg")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize]
         public async Task<IActionResult> GetNumber([FromBody] int number)
         {
 
@@ -81,7 +99,13 @@ namespace APINegocio.Controllers
 
         }
 
+        [AllowAnonymous]
         [HttpGet("name/{name}")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize]
         public async Task<IActionResult> GetName([FromBody] string name)
         {
 
@@ -101,7 +125,13 @@ namespace APINegocio.Controllers
 
         }
 
+        [AllowAnonymous]
         [HttpGet("code/{code}")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize]
         public async Task<IActionResult> GetCode([FromBody] string code)
         {
             try
@@ -119,7 +149,14 @@ namespace APINegocio.Controllers
             }
         }
 
-        [HttpDelete("{Id}")]
+
+        [HttpDelete("Id/{Id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [Authorize]
         public async Task<IActionResult> Deleted([FromBody] int Id)
         {
             try
@@ -143,6 +180,12 @@ namespace APINegocio.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(201, Type = typeof(InventoryPOSTDto))]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [Authorize]
         public async Task<IActionResult> POST(InventoryPOSTDto pOSTDto)
         {
 
@@ -153,19 +196,14 @@ namespace APINegocio.Controllers
                 return Ok(add);
             return BadRequest();
 
-            //try
-            //{
-
-            //}
-            //catch (Exception ex)
-            //{
-
-            //    return BadRequest(ex.Message);
-            //}
-
         }
 
-        [HttpPut("Id")]
+        [HttpPut("Id/{Id}")]
+        [ProducesResponseType(201, Type = typeof(InventoryPUTDto))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [Authorize]
         public async Task<IActionResult> PUT(int Id, [FromBody] InventoryPUTDto pUTDto)
         {
             try
@@ -192,7 +230,6 @@ namespace APINegocio.Controllers
             }
 
         }
-
 
     }
 }

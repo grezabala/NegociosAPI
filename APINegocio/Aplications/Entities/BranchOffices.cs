@@ -2,11 +2,13 @@
 {
     public class BranchOffices
     {
-        public int BranchOfficesId { get; set; }
+        public int BranchId { get; set; }
         public string BranchOfficesName { get; set;}
-        public string DireccionBranch { get; set; }
-        public string ContactoBranch { get; set; }
-        public string ReferenciaBranch { get; set; }
+        public string Description { get; set;}
+        public string BranchOfficesCode { get; set; }
+        public string Direccion { get; set; }
+        public string Contacts { get; set; }
+        public string Referencia { get; set; }
         public string WebSite { get; set; }
         public string FacebookAccount { get; set; }
         public string InstagramAccount { get; set; }

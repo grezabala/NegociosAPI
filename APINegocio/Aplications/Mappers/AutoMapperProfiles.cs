@@ -30,6 +30,15 @@ namespace APINegocio.Aplications.Mappers
             /*Mapper GET o LIST
             CreateMap<ProductosGetDto, Productos>(); este Dto no esta creado, solo esta en caso de ser necesario*/
 
+            //POST/BranchOffices 
+            CreateMap<BranchOfficesPOSTDto, BranchOffices>().ReverseMap();
+
+            //PUT/BranchOffices
+            CreateMap<BranchOfficesPUTDto, BranchOffices>().ReverseMap();
+
+            //GET/BranchOffices
+            CreateMap<BranchOfficesDto, BranchOffices>().ReverseMap();
+
             //POST/PROVEEDORES
             CreateMap<ProveedoresPOSTDto, Proveedores>();
 

@@ -23,7 +23,13 @@ namespace APINegocio.API.Controllers
             _Mapper = mapper;
         }
 
-        [HttpDelete("{Id}")]
+        [HttpDelete("Id/{Id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+      
         public async Task<IActionResult> Deleted(int Id)
         {
             var deleteOrder = await _LogisticaService.GetCustomersByIdAsync(Id);
@@ -37,7 +43,11 @@ namespace APINegocio.API.Controllers
             return Ok("EL PEDIDO FUE ELIMINADO CORRECTAMENTE");
         }
 
+        [AllowAnonymous]
         [HttpGet]
+        [ResponseCache(CacheProfileName = "Default30Seg")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Get()
         {
             var getOrder = await _LogisticaService.GetShoppings();
@@ -49,6 +59,11 @@ namespace APINegocio.API.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(201, Type = typeof(OrdersPOSTDto))]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> POST(OrdersPOSTDto modelDto) 
         {
             var post = _Mapper.Map<Orders>(modelDto);
@@ -61,7 +76,13 @@ namespace APINegocio.API.Controllers
 
         }
 
-        [HttpGet("{Id}")]
+        [AllowAnonymous]
+        [HttpGet("Id")]
+        [ResponseCache(CacheProfileName = "Default30Seg")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get(int Id)
         {
             var getByIdOrder = await _LogisticaService.GetCustomersByIdAsync(Id);
@@ -71,7 +92,13 @@ namespace APINegocio.API.Controllers
             return Ok(getByIdOrder);
         }
 
+        [AllowAnonymous]
         [HttpGet("name/{name}")]
+        [ResponseCache(CacheProfileName = "Default30Seg")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetName(Orders model) 
         {
             var getNameOrder = await _LogisticaService.GetOrdersByNameAsync(model.OrderName!);
@@ -82,7 +109,13 @@ namespace APINegocio.API.Controllers
             return Ok(getNameOrder);
         }
 
+        [AllowAnonymous]
         [HttpGet("code/{code}")]
+        [ResponseCache(CacheProfileName = "Default30Seg")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetCode(Orders model) 
         {
             var getCodeOrder = await _LogisticaService.GetOrdersByCodeAsync(model.OrderCode!);
@@ -93,7 +126,11 @@ namespace APINegocio.API.Controllers
             return Ok(getCodeOrder);
         }
 
-        [HttpPut("{Id}")]
+        [HttpPut("Id/{Id}")]
+        [ProducesResponseType(201, Type = typeof(BranchOfficesPUTDto))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> PUT(int Id, OrdersPUTDto modelDto) 
         {
             if (Id != modelDto.OrderId!)

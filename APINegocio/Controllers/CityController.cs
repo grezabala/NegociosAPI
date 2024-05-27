@@ -25,7 +25,11 @@ namespace APINegocio.Controllers
         }
 
         // GET: api/<CityController>
+        [AllowAnonymous]
         [HttpGet]
+        [ResponseCache(CacheProfileName = "Default30Seg")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Get()
         {
             var getCity = await _LocationService.GetCitys();
@@ -36,7 +40,13 @@ namespace APINegocio.Controllers
         }
 
         // GET api/<CityController>/5
-        [HttpGet("{Id}")]
+        [AllowAnonymous]
+        [HttpGet("Id")]
+        [ResponseCache(CacheProfileName = "Default30Seg")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get(int Id)
         {
             var getByIdCity = await _LocationService.GetByIdCityAsync(Id);
@@ -47,7 +57,9 @@ namespace APINegocio.Controllers
         }
 
         // GET api/<CityController>/5
+        [AllowAnonymous]
         [HttpGet("name/{name}")]
+        [ResponseCache(CacheProfileName = "Default30Seg")]
         public async Task<IActionResult> Get(City name)
         {
             var getByNameCity = await _LocationService.GetByNameCityAsync(name.CityName);
@@ -59,6 +71,11 @@ namespace APINegocio.Controllers
 
         // POST api/<CityController>
         [HttpPost]
+        [ProducesResponseType(201, Type = typeof(CityPOSTDto))]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Post([FromBody] CityPOSTDto modelDto)
         {
             var addCity = Mapper.Map<City>(modelDto);
@@ -71,6 +88,10 @@ namespace APINegocio.Controllers
 
         // PUT api/<CityController>/5
         [HttpPut("{Id}")]
+        [ProducesResponseType(201, Type = typeof(CityPUTDto))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Put(int Id, [FromBody] CityPUTDto modelDto)
         {
             if (Id != modelDto.CityId)
@@ -90,7 +111,12 @@ namespace APINegocio.Controllers
         }
 
         // DELETE api/<CityController>/5
-        [HttpDelete("{Id}")]
+        [HttpDelete("Id/{Id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Delete(int Id)
         {
             var deletedCity = await _LocationService.GetByIdCityAsync(Id);

@@ -26,7 +26,11 @@ namespace APINegocio.Controllers
         }
 
         // GET: api/<PaymentsController>
+        [AllowAnonymous]
         [HttpGet]
+        [ResponseCache(CacheProfileName = "Default30Seg")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Get()
         {
             var get = await _LogisticaService.GetPayments();
@@ -37,7 +41,13 @@ namespace APINegocio.Controllers
         }
 
         // GET api/<PaymentsController>/5
-        [HttpGet("{Id}")]
+        [AllowAnonymous]
+        [HttpGet("Id")]
+        [ResponseCache(CacheProfileName = "Default30Seg")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get(int Id)
         {
             var getById = await _LogisticaService.GetPaymentsByIdAsync(Id);
@@ -48,6 +58,11 @@ namespace APINegocio.Controllers
 
         // POST api/<PaymentsController>
         [HttpPost]
+        [ProducesResponseType(201, Type = typeof(PaymentsPOSTDto))]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Post([FromBody] PaymentsPOSTDto modelDto)
         {
             var addPayment = Mapper.Map<Payments>(modelDto);
@@ -59,7 +74,11 @@ namespace APINegocio.Controllers
         }
 
         // PUT api/<PaymentsController>/5
-        [HttpPut("{Id}")]
+        [HttpPut("Id/{Id}")]
+        [ProducesResponseType(201, Type = typeof(PaymentsPUTDto))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Put(int Id, [FromBody] PaymentsPUTDto modelDto)
         {
             if(Id != modelDto.PaymentId)
@@ -77,7 +96,12 @@ namespace APINegocio.Controllers
         }
 
         // DELETE api/<PaymentsController>/5
-        [HttpDelete("{Id}")]
+        [HttpDelete("Id/{Id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Delete(int Id)
         {
             var deleted = await _LogisticaService.GetPaymentsByIdAsync(Id);

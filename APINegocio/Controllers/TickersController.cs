@@ -23,14 +23,24 @@ namespace APINegocio.API.Controllers
         }
 
 
+        [AllowAnonymous]
         [HttpGet]
+        [ResponseCache(CacheProfileName = "Default30Seg")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Get()
         {
             var getTicker = await _LogisticaService.GetTickers();
             return Ok(getTicker);
         }
 
-        [HttpGet("{Id}")]
+        [AllowAnonymous]
+        [HttpGet("Id")]
+        [ResponseCache(CacheProfileName = "Default30Seg")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get(int Id)
         {
             var getTickerById = await _LogisticaService.GetTickersByIdAsync(Id);
@@ -40,7 +50,13 @@ namespace APINegocio.API.Controllers
             return Ok(getTickerById);
         }
 
-        [HttpGet("name/{name}")]
+        [AllowAnonymous]
+        [HttpGet("name")]
+        [ResponseCache(CacheProfileName = "Default30Seg")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get(Tickers model)
         {
             var getTikerByName = await _LogisticaService.GetTickersByNameAsync(model.TickerTitulo);
@@ -52,7 +68,12 @@ namespace APINegocio.API.Controllers
 
         }
 
-        [HttpDelete("{Id}")]
+        [HttpDelete("Id/{Id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Deleted(int Id)
         {
             var deletedTicker = await _LogisticaService.GetTickersByIdAsync(Id);
@@ -67,7 +88,12 @@ namespace APINegocio.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> POST(TickersPOSTDto modelDto)
+        [ProducesResponseType(201, Type = typeof(TickersPOSTDto))]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> POST([FromBody] TickersPOSTDto modelDto)
         {
             var postTicker = Mapper.Map<Tickers>(modelDto);
             _LogisticaService.Add(postTicker);
@@ -77,8 +103,12 @@ namespace APINegocio.API.Controllers
             return BadRequest();
         }
 
-        [HttpPut("{Id}")]
-        public async Task<IActionResult> PUT(int Id, TickersPUTDto modelDto)
+        [HttpPut("Id/{Id}")]
+        [ProducesResponseType(201, Type = typeof(TickersPUTDto))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> PUT(int Id, [FromBody] TickersPUTDto modelDto)
         {
             if (Id != modelDto.TickerId)
                 return BadRequest("ERROR!... EL ID QUE ACABA DE INGRESAR NO COINCIDEN CON NINGUN TICKER");

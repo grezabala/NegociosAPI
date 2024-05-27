@@ -1,11 +1,11 @@
-﻿using APINegocio.Aplications.Authentication.Interfaz;
-using APINegocio.Aplications.Dtos;
+﻿using APINegocio.Aplications.Dtos;
 using APINegocio.Aplications.Services.Interfaz;
 using APINegocio.Aplications.Data.Interfaz;
 using APINegocio.Aplications.Entities;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using APINegocio.Aplications.Authentication.Interfaz;
 
 namespace APINegocio.API.Controllers
 {
@@ -26,7 +26,6 @@ namespace APINegocio.API.Controllers
             this._TokenServices = tokenServices;
             this._Mapper = mapper;
         }
-
 
         [HttpPost("register")]
         public async Task<IActionResult> Register(UsersRegisterDto modelDto)

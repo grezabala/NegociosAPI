@@ -250,9 +250,13 @@ C:\Users\DELL\Desktop\API Rest\APINegocio\APINegocio\obj\Debug\net6.0\staticweba
 C:\Users\DELL\Desktop\API Rest\APINegocio\APINegocio\obj\Debug\net6.0\staticwebassets\msbuild.buildTransitive.APINegocio.props
 C:\Users\DELL\Desktop\API Rest\APINegocio\APINegocio\obj\Debug\net6.0\staticwebassets.pack.json
 C:\Users\DELL\Desktop\API Rest\APINegocio\APINegocio\obj\Debug\net6.0\scopedcss\bundle\APINegocio.styles.css
-C:\Users\DELL\Desktop\API Rest\APINegocio\APINegocio\obj\Debug\net6.0\APINegocio.csproj.CopyComplete
 C:\Users\DELL\Desktop\API Rest\APINegocio\APINegocio\obj\Debug\net6.0\APINegocio.dll
 C:\Users\DELL\Desktop\API Rest\APINegocio\APINegocio\obj\Debug\net6.0\refint\APINegocio.dll
 C:\Users\DELL\Desktop\API Rest\APINegocio\APINegocio\obj\Debug\net6.0\APINegocio.pdb
 C:\Users\DELL\Desktop\API Rest\APINegocio\APINegocio\obj\Debug\net6.0\APINegocio.genruntimeconfig.cache
 C:\Users\DELL\Desktop\API Rest\APINegocio\APINegocio\obj\Debug\net6.0\ref\APINegocio.dll
+C:\Users\DELL\Desktop\API Rest\APINegocio\APINegocio\obj\Debug\net6.0\APINegocio.csproj.Up2Date
+C:\Users\DELL\Desktop\API Rest\APINegocio\APINegocio\bin\Debug\net6.0\Microsoft.AspNetCore.JsonPatch.dll
+C:\Users\DELL\Desktop\API Rest\APINegocio\APINegocio\bin\Debug\net6.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
+C:\Users\DELL\Desktop\API Rest\APINegocio\APINegocio\bin\Debug\net6.0\Newtonsoft.Json.dll
+C:\Users\DELL\Desktop\API Rest\APINegocio\APINegocio\bin\Debug\net6.0\Newtonsoft.Json.Bson.dll
