@@ -44,33 +44,22 @@ namespace APINegocio.Aplications.Configuration
                 .IsRequired();
 
             builder.Property(x => x.DateCread)
+                .IsUnicode(false);
+            //.IsRequired();
+
+            builder.Property(x => x.StorId)
+            .IsUnicode(false)
+            .IsRequired();
+
+            builder.Property(x => x.StoresStorId)
+            .IsUnicode(false)
+            .IsRequired();
+
+            builder.Property(x => x.Stock)
                 .IsUnicode(false)
                 .IsRequired();
-
-            builder.Property(x => x.IsDateCread)
-                .IsUnicode(false)
-                .IsRequired();
-
-            builder.Property(x => x.IsDeleted)
-                .IsUnicode(false);
-
-            builder.Property(x => x.IsDeletedAt)
-                .IsUnicode(false);
-
-            builder.Property(x => x.IsUpdated)
-                .IsUnicode(false);
-
-            builder.Property(x => x.IsUpdatedAt)
-                .IsUnicode(false);
-
-            builder.Property(x => x.IsShipped)
-                .IsUnicode(false);
 
             builder.Property(x => x.ShoppingId)
-                .IsUnicode(false)
-                .IsRequired();
-
-            builder.Property(x => x.StoreId)
                 .IsUnicode(false)
                 .IsRequired();
 
@@ -81,6 +70,30 @@ namespace APINegocio.Aplications.Configuration
             builder.Property(x => x.ProveedorId)
                 .IsUnicode(false)
                 .IsRequired();
+
+            builder.Property(x => x.IsDateCread)
+                .IsUnicode(false);
+            //.IsRequired();
+
+            builder.Property(x => x.IsDeleted)
+                .IsUnicode(false);
+
+            builder.HasQueryFilter(x => !x.IsDeleted);
+
+            builder.Property(x => x.IsDeletedAt)
+                .IsUnicode(false);
+
+            builder.Property(x => x.IsUpdated)
+                .IsUnicode(false);
+
+            builder.Property(x => x.IsStatus)
+                .IsUnicode(false);
+
+            builder.Property(x => x.IsUpdatedAt)
+                .IsUnicode(false);
+
+            builder.Property(x => x.IsShipped)
+                .IsUnicode(false);
 
         }
     }

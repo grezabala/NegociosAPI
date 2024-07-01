@@ -10,35 +10,53 @@ namespace APINegocio.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class ShoppingController : ControllerBase
     {
-        private readonly ILogisticaService _LogiticaServices;
-        private readonly IMapper _Mapper;
+        private readonly IShoppingService _shoppingService;
+        private readonly IMapper _mapper;
 
-        public ShoppingController(ILogisticaService logisticaService, IMapper mapper)
+        public ShoppingController(IShoppingService shoppingService, IMapper mapper)
         {
-            _LogiticaServices = logisticaService;
-            _Mapper = mapper;
+            _shoppingService = shoppingService;
+            _mapper = mapper;
         }
 
-        [HttpDelete("Id/{Id}")]
+        [HttpDelete("Id/{Id:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int Id)
         {
-            var deletedShopping = await _LogiticaServices.GetShoppingByIdAsync(id);
-            if (deletedShopping == null)
-                return NotFound("ERROR!... LA COMPRA QUE DESEA ELIMINAR NO FUE ENCONTRADO");
+            try
+            {
+                if (!_shoppingService.IsExisteShoppingById(Id))
+                {
+                    return NotFound("La compra no existe.....");
+                }
 
-            _LogiticaServices.Remove(deletedShopping);
-            if (!await _LogiticaServices.SaveAll())
-                return BadRequest("ERROR!... ESTA COMPRA NO SE PUEDE ELIMINAR");
 
-            return Ok("LA COMPRA FUE ELIMINADA, SATISFACTORIAMENTE");
+                var deletedShopping = await _shoppingService.GetShoppingByIdAsync(Id);
+                //if (deletedShopping == null)
+                //    return NotFound("ERROR!... LA COMPRA QUE DESEA ELIMINAR NO FUE ENCONTRADO");
+
+                if (!_shoppingService.GetShoppingByIsDeleted(deletedShopping))
+                {
+                    ModelState.AddModelError("", $"Algo salió mal al eliminar su compra... {deletedShopping}");
+                    return StatusCode(500, ModelState);
+
+                }
+
+                return Ok("LA COMPRA FUE ELIMINADA, SATISFACTORIAMENTE");
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...! Algo salió mal al eliminar su compra. Por favor validar que su compra existe.", ex);
+            }
+
         }
 
         [AllowAnonymous]
@@ -46,60 +64,114 @@ namespace APINegocio.API.Controllers
         [ResponseCache(CacheProfileName = "Default30Seg")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetShopping()
         {
-            var get = await _LogiticaServices.GetShoppings();
-            return Ok(get);
+            try
+            {
+                var _getShopping = await _shoppingService.GetShoppings();
+                var _getShoppingDto = new List<ShoppingDto>();
+
+                foreach (var shopping in _getShopping)
+                {
+                    _getShoppingDto.Add(_mapper.Map<ShoppingDto>(shopping));
+                }
+
+                return Ok(_getShoppingDto);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...! Algo salió mal al mostrar todas las compra registrada.", ex);
+            }
         }
 
         [AllowAnonymous]
-        [HttpGet("Id")]
+        [HttpGet("~/GetShoppingById")]
         [ResponseCache(CacheProfileName = "Default30Seg")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Get(int Id)
+        public async Task<IActionResult> GetShoppingById(int Id)
         {
-            var getById = await _LogiticaServices.GetShoppingByIdAsync(Id);
-            if (getById == null)
-                return NotFound("ERROR!.. LA COMPRA NO FUE ENCONTRADO");
+            try
+            {
+                var getById = await _shoppingService.GetShoppingByIdAsync(Id);
 
-            return Ok(getById);
+                var _getByIdDto = _mapper.Map<ShoppingDto>(getById);
+
+                if (_getByIdDto == null)
+                    return NotFound("ERROR!.. LA COMPRA NO FUE ENCONTRADO");
+
+                return Ok(_getByIdDto);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...! Algo salió mal al mostrar la compra. Por favor validar que el ID sea el correcto." + ":" +
+                    "O que la compra existe.", ex);
+            }
 
         }
 
         [AllowAnonymous]
-        [HttpGet("number/{number}")]
+        [HttpGet("~/GetShoppingByNumber")]
         [ResponseCache(CacheProfileName = "Default30Seg")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Get(Shopping model)
+        public async Task<IActionResult> GetShoppingByNumber(int number)
         {
-            var getNumber = await _LogiticaServices.GetShoppingByNumberShopping(model);
-            if (getNumber == null)
-                return NotFound("COMPRA NO ENCONTRADA " + "VERIFIQUE SI EL NUMERO DE LA COMPRA ES VALIDO");
+            try
+            {
+                var getNumber = await _shoppingService.GetShoppingByNumberShopping(number);
 
-            return Ok(getNumber);
+                var _getNumberDto = _mapper.Map<ShoppingDto>(getNumber);
+
+                if (_getNumberDto == null)
+                    return NotFound("COMPRA NO ENCONTRADA " + "VERIFIQUE SI EL NUMERO DE LA COMPRA ES VALIDO");
+
+                return Ok(_getNumberDto);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...! Algo salió mal al mostrar la compra. Por favor validar que el número sea el correcto." + ":" +
+                    "O que la compra existe.", ex);
+            }
+
+
         }
 
-       
-        [AllowAnonymous] 
-        [HttpGet("code/{code}")]
+
+        [AllowAnonymous]
+        [HttpGet("~/GetShoppingByCode")]
         [ResponseCache(CacheProfileName = "Default30Seg")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetCode(Shopping model)
+        public async Task<IActionResult> GetShoppingByCode(string code)
         {
-            var getCode = await _LogiticaServices.GetShoppingByCodeAsync(model);
-            if (getCode is null)
-                return NotFound("COMPRA NO ENCONTRADA" + "VERIFIQUE SI EL CODIGO ES VALIDO");
+            try
+            {
+                var getCode = await _shoppingService.GetShoppingByCodeAsync(code);
 
-            return Ok(getCode);
+                var _getCodeDto = _mapper.Map<ShoppingDto>(getCode);
+
+                if (_getCodeDto is null)
+                    return NotFound("COMPRA NO ENCONTRADA" + "VERIFIQUE SI EL CODIGO ES VALIDO");
+
+                return Ok(_getCodeDto);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...! Algo salió mal al mostrar la compra. Por favor validar que el código sea el correcto." + ":" +
+                     "O que la compra existe.", ex);
+            }
+
         }
 
         [HttpPost]
@@ -110,13 +182,44 @@ namespace APINegocio.API.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Post([FromBody] ShoppingPOSTDto model)
         {
-            var post = _Mapper.Map<Shopping>(model);
 
-            _LogiticaServices.Add(post);
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
 
-            if (await _LogiticaServices.SaveAll())
+                if (model == null)
+                    return BadRequest(ModelState);
+
+                if (_shoppingService.IsExisteShoppingByName(model.ShoppingName.ToLower().Trim()))
+                {
+                    ModelState.AddModelError("", "Error...! La compra ya existe." + ":" + "Desea duplicar la compra.");
+                    return StatusCode(404, ModelState);
+
+                }
+
+                var post = _mapper.Map<Shopping>(model);
+
+                if (!_shoppingService.IsCread(post))
+                    return Ok(post);
+
                 return Ok(post);
-            return BadRequest();
+
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...! Algo salió mal al registrar su compra... por favor vuelva a intentarlo." + ":" +
+                    "O verifique que esta registrando los datos solicitado correctamente.", ex);
+            }
+
+            //var post = _mapper.Map<Shopping>(model);
+
+            // _shoppingService.IsCread(post);
+
+            //if (await _shoppingService.IsSave())
+            //    return Ok(post);
+            //return BadRequest();
         }
 
         [HttpPut("Id/{Id}")]
@@ -124,21 +227,32 @@ namespace APINegocio.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> Put(int Id, [FromBody] ShoppingPUTDto model) 
+        public async Task<IActionResult> Put(int Id, [FromBody] ShoppingPUTDto model)
         {
-         if(Id != model.ShoppingId)
-                return BadRequest("ERROR!... EL ID QUE ACABA DE INGRESAR NO COINCIDEN CON NINGUNA COMPRA");
+            try
+            {
+                if (Id != model.ShoppingId)
+                    return BadRequest("ERROR!... EL ID QUE ACABA DE INGRESAR NO COINCIDEN CON NINGUNA COMPRA");
 
-         var get = await _LogiticaServices.GetShoppingByIdAsync(model.ShoppingId);
-            if (get is null)
-                return BadRequest();
+                var get = await _shoppingService.GetShoppingByIdAsync(model.ShoppingId);
 
-            _Mapper.Map(get, model);
+                if (get == null)
+                    return BadRequest();
 
-            if(!await _LogiticaServices.SaveAll())
-                return NoContent();
+                _mapper.Map(model, get);
 
-            return Ok(get);
+                if (!_shoppingService.IsSave())
+                    return NoContent();
+
+                return Ok(get);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...! Algo salió mal al editar su compra... por favor vuelva a intentarlo." + ":" +
+                    "O verifique que esta registrando los datos solicitado correctamente.", ex);
+            }
+
         }
     }
 }

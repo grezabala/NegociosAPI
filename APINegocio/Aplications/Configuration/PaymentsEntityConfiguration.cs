@@ -35,32 +35,34 @@ namespace APINegocio.Aplications.Configuration
                 .IsRequired();
 
             builder.Property(x => x.IsCreadtPayment)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+            //.IsRequired();
 
             builder.Property(x => x.IsCreadtRefund)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+            //.IsRequired();
 
             builder.Property(x => x.IsDeleted)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+               // .IsRequired();
+
+            builder.HasQueryFilter(x => !x.IsDeleted);
 
             builder.Property(x => x.IsDeletedAt)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+                //.IsRequired();
 
             builder.Property(x => x.IsRefund)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+            //.IsRequired();
 
             builder.Property(x => x.IsUpdated)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+            // .IsRequired();
 
             builder.Property(x => x.IsUpdatedAt)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+               // .IsRequired();
 
             builder.Property(x => x.Monto)
                 .IsUnicode(false)
@@ -80,6 +82,9 @@ namespace APINegocio.Aplications.Configuration
                 .IsUnicode(false)
                 .HasMaxLength(250)
                 .IsRequired();
+
+            builder.Property(x => x.PaymentCode)
+                .IsUnicode(false); //Agregado 26/06/24
         }
     }
 }

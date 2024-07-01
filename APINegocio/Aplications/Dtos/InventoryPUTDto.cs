@@ -10,6 +10,7 @@
         public string CodigoInventory { get; set; }
         public DateTime DateCread { get; set; }
         public int StoreId { get; set; }
+        public int Stock { get; set; }
         public int ShoppingId { get; set; }
         public int ProductoId { get; set; }
         public int ProveedorId { get; set; }

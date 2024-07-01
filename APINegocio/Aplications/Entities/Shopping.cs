@@ -1,6 +1,6 @@
 ﻿namespace APINegocio.Aplications.Entities
 {
-    public class Shopping
+    public partial class Shopping
     {
         public Shopping()
         {
@@ -15,11 +15,11 @@
         public string ShoppingTitle { get; set; }
         public string ShoppingCode { get; set; }
         public int NumberShopping { get; set; }
-        public DateTime IsShoppingDate { get; set; }
+        public DateTime? IsShoppingDate { get; set; }
         public bool IsDeleted { get; set; }
-        public DateTime IsDeletedAt { get; set; } //New
+        public DateTime? IsDeletedAt { get; set; } //New
         public bool IsAsset { get; set; }
-        public DateTime IsModifedShopping { get; set; }
+        public DateTime? IsModifedShopping { get; set; }
         public bool IsModified { get; set; }
         public virtual ICollection<Orders> Orders { get; set; }
     }

@@ -88,12 +88,12 @@ namespace APINegocio.Aplications.Configuration
                 .IsUnicode(false);
 
             builder.Property(e => e.IsDeletedAt)
-              .IsRequired()
+              //.IsRequired()
               .IsUnicode(false);
 
-            builder.Property(e => e.IsDeletedAt)
-                .IsRequired()
-                .IsUnicode(false);
+            //builder.Property(e => e.IsDeletedAt)
+            //    .IsRequired()
+            //    .IsUnicode(false);
 
             builder.Property(e => e.IsCreadBy)
                .IsRequired()
@@ -103,9 +103,9 @@ namespace APINegocio.Aplications.Configuration
               .IsRequired()
               .IsUnicode(false);
 
-            builder.Property(e => e.IsDeletedAt)
-              .IsRequired()
-              .IsUnicode(false);
+            //builder.Property(e => e.IsDeletedAt)
+            //  .IsRequired()
+            //  .IsUnicode(false);
 
             builder.Property(e => e.IsDeletedBy)
               .IsRequired()
@@ -122,6 +122,10 @@ namespace APINegocio.Aplications.Configuration
             builder.Property(e => e.IsStatud)
              .IsRequired()
              .IsUnicode(false);
+
+            //Linea para manejar automáticamente los registro eleminados
+            builder.HasQueryFilter(e => !e.IsDeletedBy);
+          
         }
     }
 }

@@ -2,8 +2,10 @@
 {
     public class Stores
     {
-        public int StoresId { get; set; }
+        public int StorId { get; set; }
         public string StoresName { get; set;}
+        public int Stock { get; set; } //Agregado el 27/06/24
+        public string CodeStore { get; set; } //Agregado el 27/06/24
         public string StoresDescription { get; set; }
         public int StoresCount { get; set; } = 0;
         public int StoresTotal { get; set; }

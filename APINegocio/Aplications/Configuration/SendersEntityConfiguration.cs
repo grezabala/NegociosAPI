@@ -24,8 +24,8 @@ namespace APINegocio.Aplications.Configuration
                 .IsRequired();
 
             builder.Property(x => x.IsCreadSender)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+                //.IsRequired();
 
             builder.Property(x => x.SenderName)
                 .IsRequired()
@@ -36,24 +36,26 @@ namespace APINegocio.Aplications.Configuration
                 .HasMaxLength(80);
 
             builder.Property(x => x.IsModifiedSender)
-                 .IsUnicode(false)
-                .IsRequired();
+                 .IsUnicode(false);
+                //.IsRequired();
 
             builder.Property(x => x.SenderCode)
                 .IsRequired()
                 .HasMaxLength(30);
 
             builder.Property(x => x.IsDeleted)
-                 .IsUnicode(false)
-                .IsRequired();
+                 .IsUnicode(false);
+                //.IsRequired();
+
+            builder.HasQueryFilter(x => !x.IsDeleted);
 
             builder.Property(x => x.IsDeletedAt)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+                //.IsRequired();
 
             builder.Property(x => x.IsModifiedPostalCode)
-              .IsUnicode(false)
-                .IsRequired();
+              .IsUnicode(false);
+               // .IsRequired();
 
             builder.Property(x => x.SenderDirection)
                 .IsUnicode(false)

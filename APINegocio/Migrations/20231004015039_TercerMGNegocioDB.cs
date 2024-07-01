@@ -8,6 +8,7 @@ namespace APINegocio.Migrations
     /// <inheritdoc />
     public partial class TercerMGNegocioDB : Migration
     {
+
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {

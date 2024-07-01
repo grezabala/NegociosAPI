@@ -19,7 +19,7 @@
         public float Longitud { get; set; }
         public bool IsDeletedBy { get; set; }
         public bool IsCreadBy { get; set; }
-        public DateTime IsDeletedAt { get; set;}
+        public DateTime? IsDeletedAt { get; set;}
         public DateTime IsCreadAt { get; set; }
         public bool IsUpdatedBy { get; set; }
         public DateTime IsUpdatedAt { get; set;}

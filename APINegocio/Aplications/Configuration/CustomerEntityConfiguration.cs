@@ -36,8 +36,11 @@ namespace APINegocio.Aplications.Configuration
                 .IsRequired();
 
             builder.Property(x => x.CreatedDate)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+            //.IsRequired();
+
+            builder.Property(x => x.CodeCustomer)
+                .IsUnicode(false); //Agregado 26/06/24
 
             builder.Property(x => x.CustomerEmail)
                 .IsUnicode(false)
@@ -55,20 +58,22 @@ namespace APINegocio.Aplications.Configuration
                 .IsRequired();
 
             builder.Property(x => x.IsDeleted)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+                //.IsRequired();
+
+            builder.HasQueryFilter(x => !x.IsDeleted);
 
             builder.Property(x => x.IsModified)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+            //.IsRequired();
 
             builder.Property(x => x.IsStatu)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+            //.IsRequired();
 
             builder.Property(x => x.IsUpdatedDate)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+                //.IsRequired();
 
             builder.Property(x => x.PostalCode)
                 .IsUnicode(false)
@@ -76,8 +81,8 @@ namespace APINegocio.Aplications.Configuration
                 .IsRequired();
 
             builder.Property(x => x.IsDeletedAt)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+                //.IsRequired();
         }
     }
 }

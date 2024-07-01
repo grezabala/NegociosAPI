@@ -26,9 +26,9 @@
         public bool IsLocked { get; set; }
         public bool IsModified { get; set; }
         public bool IsImprection { get; set; }
-        public DateTime DateImprect { get; set; }
-        public DateTime IsModifiedDate { get; set; }
-        public DateTime IsDeletedAt { get; set; } //New
+        public DateTime? DateImprect { get; set; }
+        public DateTime? IsModifiedDate { get; set; }
+        public DateTime? IsDeletedAt { get; set; } //New
 
         public virtual ICollection<DetalleTicker> DetalleTickers { get; set; }
         public virtual Customers Customers { get; set; }

@@ -21,11 +21,23 @@ namespace APINegocio.Aplications.Mappers
             CreateMap<Users, UsersListDto>();
             #endregion
 
+            //POST/Payments
+            CreateMap<PaymentsPOSTDto, Payments>().ReverseMap();
+
+            //PUT/ Payments
+            CreateMap<PaymentsPUTDto, Payments>().ReverseMap();
+
+            //GET/ Payments
+            CreateMap<PaymentsDto, Payments>().ReverseMap();
+
+            //GET/PRODUCTOS
+            CreateMap<ProductosDto, Productos>().ReverseMap();
+
             //POST/PRODUCTOS
-            CreateMap<ProductosPOSTDto, Productos>();
+            CreateMap<ProductosPOSTDto, Productos>().ReverseMap();
 
             //PUT/PRODUCTOS
-            CreateMap<ProductoPUTDto, Productos>();
+            CreateMap<ProductoPUTDto, Productos>().ReverseMap();
 
             /*Mapper GET o LIST
             CreateMap<ProductosGetDto, Productos>(); este Dto no esta creado, solo esta en caso de ser necesario*/
@@ -40,10 +52,13 @@ namespace APINegocio.Aplications.Mappers
             CreateMap<BranchOfficesDto, BranchOffices>().ReverseMap();
 
             //POST/PROVEEDORES
-            CreateMap<ProveedoresPOSTDto, Proveedores>();
+            CreateMap<ProveedoresPOSTDto, Proveedores>().ReverseMap();
 
             //PUT/PRVEEDORES
             CreateMap<ProveedoresPUTDto, Proveedores>();
+
+            //GET/PRVEEDORES
+            CreateMap<ProveedoresDto, Proveedores>().ReverseMap();
 
             //POST/CUSTOMER
             CreateMap<CustomerPOSTDto, Customers>();
@@ -52,7 +67,22 @@ namespace APINegocio.Aplications.Mappers
             CreateMap<CustomerPUTDto, Customers>();
 
             //POST/SHOPPING
-            CreateMap<ShoppingPOSTDto, Shopping>();
+            CreateMap<ShoppingPOSTDto, Shopping>().ReverseMap();
+
+            //PUT/SHOPPING
+            CreateMap<ShoppingPUTDto, Shopping>().ReverseMap();
+
+            //GET/SHOPPING
+            CreateMap<ShoppingDto, Shopping>().ReverseMap();
+
+            //POST/Stores
+            CreateMap<StoresPOSTDto, Stores>().ReverseMap();
+
+            //PUT/Stores
+            CreateMap<StoresPUTDto, Stores>().ReverseMap();
+
+            //GET/Inventory
+            CreateMap<InventoryDto, Inventory>().ReverseMap();
 
             //PUT/SHOPPING
             CreateMap<ShoppingPUTDto, Shopping>();
@@ -62,6 +92,9 @@ namespace APINegocio.Aplications.Mappers
 
             //PUT/SENDERS
             CreateMap<SendersPUTDto, Senders>();
+
+            //GET/SENDERS
+            CreateMap<SendersDto, Senders>().ReverseMap();
 
             //POST/ORDERS
             CreateMap<OrdersPOSTDto, Orders>();
@@ -75,11 +108,25 @@ namespace APINegocio.Aplications.Mappers
             //PUT/TICKERS
             CreateMap<TickersPUTDto, Tickers>();
 
+            CreateMap<TickersDto, Tickers>().ReverseMap();
+
             //POST/Inventory
             CreateMap<InventoryPOSTDto, Inventory>();
 
             //PUT/Inventory
             CreateMap<InventoryPUTDto, Inventory>();
+
+            //POST/City
+            CreateMap<CityPOSTDto, City>().ReverseMap();
+
+            //PUT/City 
+            CreateMap<CityPUTDto, City>().ReverseMap();
+
+            //POST/Countries 
+            CreateMap<CountriesPOSTDto, Countries>().ReverseMap();
+
+            //PUT/Countries 
+            CreateMap<CountriesPUTDto, Countries>().ReverseMap();
         }
     }
 }

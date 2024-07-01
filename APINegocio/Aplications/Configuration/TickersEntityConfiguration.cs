@@ -87,6 +87,8 @@ namespace APINegocio.Aplications.Configuration
                 .IsUnicode(false)
                 .IsRequired();
 
+            builder.HasQueryFilter(x => x.IsDeleted);
+
             builder.Property(x => x.IsLocked)
                 .IsUnicode(false)
                 .IsRequired();
@@ -96,8 +98,8 @@ namespace APINegocio.Aplications.Configuration
                 .IsRequired();
 
             builder.Property(x => x.IsModifiedDate)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+           
 
             builder.Property(x => x.IsImprection)
                 .IsUnicode(false)

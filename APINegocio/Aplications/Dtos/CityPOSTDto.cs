@@ -10,14 +10,14 @@
         public DateTime? IsDeletedAt { get; set; }
         public bool IsUpdated { get; set; }
         public DateTime? IsUpdateAt { get; set; }
-        public bool IsStatu { get; set; }
+        public bool IsStatus { get; set; }
 
         public CityPOSTDto()
         {
             IsDeleted = false;
             IsUpdated = false;
             IsDeletedAt = null;
-            IsStatu = true;
+            IsStatus = true;
             IsDeletedAt = null;
         }
     }

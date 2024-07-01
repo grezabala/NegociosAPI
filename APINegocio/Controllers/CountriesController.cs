@@ -11,7 +11,7 @@ namespace APINegocio.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-
+    [Authorize]
     public class CountriesController : ControllerBase
     {
         private readonly ILocationService _LocationService;
@@ -21,12 +21,14 @@ namespace APINegocio.Controllers
         {
             _LocationService = locationService;
             Mapper = mapper;
+
+            //Agregar un el campo Código en la tabla Countries
         }
 
 
         // GET: api/<CountriesController>
         [AllowAnonymous]
-        [HttpGet]        
+        [HttpGet]
         [ResponseCache(CacheProfileName = "Default30Seg")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -60,9 +62,9 @@ namespace APINegocio.Controllers
         [ResponseCache(CacheProfileName = "Default30Seg")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Get(Countries name)
+        public async Task<IActionResult> Get(string name)
         {
-            var getByNameCountry = await _LocationService.GetByNameCountrieAsync(name.CountryName);
+            var getByNameCountry = await _LocationService.GetByNameCountrieAsync(name);
             if (getByNameCountry == null)
                 return BadRequest();
 
@@ -76,16 +78,42 @@ namespace APINegocio.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> Post([FromBody] CountriesPOSTDto modelDto)
         {
-            var addCountry = Mapper.Map<Countries>(modelDto);
+            try
+            {
+                if (modelDto != null)
+                {
+                    var addCountry = Mapper.Map<Countries>(modelDto);
 
-            _LocationService.Add(addCountry);
+                    modelDto.IsDeleted = false;
+                    modelDto.IsDeletedAt = null;
+                    modelDto.IsStatud = true;
+                    modelDto.IsUpdated = false;
+                    modelDto.IsUpdatedAt = null;
+                    modelDto.WhenDate = DateTime.Now;
+                    modelDto.IsDateCreadCountry = DateTime.Now;
 
-            if (!await _LocationService.SaveAll())
-                return Ok(addCountry);
-            return BadRequest();
+                    _LocationService.Add(addCountry);
+
+                    if (!await _LocationService.SaveAll())
+                    {
+                        return Ok(addCountry);
+                    }
+
+                    if (addCountry == null)
+                        return BadRequest();
+
+                    return Ok(addCountry);
+                }
+                throw new InvalidOperationException("Error! El formulario se envio vacio, por favor introducir los datos correpondiente");
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error!!! Algo salió mal al agregar el nuevo registro.", ex);
+            }
 
         }
 
@@ -95,23 +123,39 @@ namespace APINegocio.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> Put(int Id, [FromBody] CountriesPUTDto modelDto)
         {
 
-            if (Id != modelDto.CountryId)
-                return BadRequest("ERROR!... EL ID QUE ACABA DE INGRESAR NO COINCIDE CON NINGUN PAIS");
+            try
+            {
+                if (Id != modelDto.CountryId)
+                    return BadRequest("ERROR!... EL ID QUE ACABA DE INGRESAR NO COINCIDE CON NINGUN PAIS");
 
-            var getByIdCountry = await _LocationService.GetByIdCountriesAsync(Id);
-            if (getByIdCountry == null)
-                return BadRequest();
+                modelDto.IsDeleted = false;
+                modelDto.IsDeletedAt = DateTime.Now.AddDays(-1);
+                modelDto.IsUpdated = true;
+                modelDto.IsUpdatedAt = DateTime.Now;
 
-            Mapper.Map(getByIdCountry, modelDto);
+                var getByIdCountry = await _LocationService.GetByIdCountriesAsync(Id);
 
-            if (await _LocationService.SaveAll())
-                return NoContent();
+                if (getByIdCountry == null)
+                    return BadRequest();
 
-            return Ok(getByIdCountry);
+                Mapper.Map(modelDto, getByIdCountry);
+
+                if (await _LocationService.SaveAll())
+                    return NoContent();
+
+                return Ok(getByIdCountry);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error! No fue posible modificar el registro", ex);
+            }
+
+
         }
 
         // DELETE api/<CountriesController>/5
@@ -124,14 +168,24 @@ namespace APINegocio.Controllers
         [Authorize]
         public async Task<IActionResult> Delete(int Id)
         {
-            var getById = await _LocationService.GetByIdCountriesAsync(Id);
-            if (getById == null)
-                return NotFound();
+            try
+            {
+                var getById = await _LocationService.GetByIdCountriesAsync(Id);
+                if (getById == null)
+                    return NotFound();
 
-            _LocationService.Remove(getById);
-            if (!await _LocationService.SaveAll())
-                return BadRequest("ERROR!" + "NO ES POSIBLE ELIMINAR EL PAIS");
-            return Ok(getById);
+                _LocationService.GetByCountriesIsDeleted(getById);
+                if (!await _LocationService.SaveAll())
+                    return BadRequest("ERROR!" + "NO ES POSIBLE ELIMINAR EL PAIS");
+
+                return Ok(getById);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error! No fue posible eliminar el registro, por favor verificar que el Id es correcto", ex);
+            }
+
 
         }
     }

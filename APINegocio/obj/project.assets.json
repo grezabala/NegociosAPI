@@ -4711,11 +4711,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\DELL\\Desktop\\API Rest\\APINegocio\\APINegocio\\APINegocio.csproj",
+      "projectUniqueName": "C:\\Users\\DELL\\Desktop\\Archivos I\\API Rest\\APINegocio\\APINegocio\\APINegocio.csproj",
       "projectName": "APINegocio",
-      "projectPath": "C:\\Users\\DELL\\Desktop\\API Rest\\APINegocio\\APINegocio\\APINegocio.csproj",
+      "projectPath": "C:\\Users\\DELL\\Desktop\\Archivos I\\API Rest\\APINegocio\\APINegocio\\APINegocio.csproj",
       "packagesPath": "C:\\Users\\DELL\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\DELL\\Desktop\\API Rest\\APINegocio\\APINegocio\\obj\\",
+      "outputPath": "C:\\Users\\DELL\\Desktop\\Archivos I\\API Rest\\APINegocio\\APINegocio\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

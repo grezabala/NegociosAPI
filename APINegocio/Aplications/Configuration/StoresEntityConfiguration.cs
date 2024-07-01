@@ -15,8 +15,8 @@ namespace APINegocio.Aplications.Configuration
         {
             base.Configure(builder);
 
-            builder.HasKey(x => x.StoresId);
-            builder.Property(x => x.StoresId)
+            builder.HasKey(x => x.StorId);
+            builder.Property(x => x.StorId)
                 .IsUnicode(false)
                 .IsRequired();
 
@@ -24,6 +24,12 @@ namespace APINegocio.Aplications.Configuration
                 .IsUnicode(false)
                 .HasMaxLength(250)
                 .IsRequired();
+
+            builder.Property(x => x.Stock)
+                .IsUnicode(); //Agregado el 27/06/24
+
+            builder.Property(x => x.CodeStore)
+                .IsUnicode(false); //Agregado el 27/06/24
 
             builder.Property(x => x.AceptPyments)
                 .IsUnicode(false)
@@ -57,6 +63,8 @@ namespace APINegocio.Aplications.Configuration
             builder.Property(x => x.IsDeleted)
                 .IsUnicode(false)
                 .IsRequired();
+
+            builder.HasQueryFilter(x => x.IsDeleted);
 
             builder.Property(x => x.IsModified)
                 .IsUnicode(false)

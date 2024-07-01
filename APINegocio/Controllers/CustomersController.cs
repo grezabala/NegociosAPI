@@ -13,16 +13,16 @@ namespace APINegocio.Controllers
     [Authorize]
     public class CustomersController : ControllerBase
     {
-        private readonly ILogisticaService _LogiticaServices;
-        private readonly IMapper _Mapper;
+        private readonly ILogisticaService _logiticaServices;
+        private readonly IMapper _mapper;
 
         public CustomersController(ILogisticaService logiticaServices, IMapper mapper)
         {
-            _LogiticaServices = logiticaServices;
-            _Mapper = mapper;
+            _logiticaServices = logiticaServices;
+            _mapper = mapper;
         }
 
-        [HttpDelete("Id/{Id}")]
+        [HttpDelete("Id/{Id:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -30,15 +30,31 @@ namespace APINegocio.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Deleted(int Id)
         {
-            var deletedCustomer = await _LogiticaServices.GetCustomersByIdAsync(Id);
-            if (deletedCustomer is null)
-                return BadRequest("ERROR!... EL ID DEL CLIENTE NO FUE ENCONTRADO");
+            try
+            {
+                var deletedCustomer = await _logiticaServices.GetCustomersByIdAsync(Id);
+                if (deletedCustomer is null)
+                    return NotFound("ERROR!... EL ID DEL CLIENTE NO FUE ENCONTRADO");
 
-            _LogiticaServices.Remove(deletedCustomer);
-            if (!await _LogiticaServices.SaveAll())
-                return BadRequest("ERROR!... NO FUE POSIBLE ELIMINAR EL CLIENTE");
+                if (_logiticaServices.GetByCustomerIsDeleted(deletedCustomer))
+                {
+                    ModelState.AddModelError("", "Error! No fue posible eliminar el registro");
+                    StatusCode(500, ModelState);
 
-            return Ok("EL CLIENTE FUE ELIMINADO CORRECTAMENTE");
+                }
+
+                return NoContent();
+
+                //if (!await _logiticaServices.SaveAll())
+                //    return BadRequest("ERROR!... NO FUE POSIBLE ELIMINAR EL CLIENTE");
+                //return Ok("EL CLIENTE FUE ELIMINADO CORRECTAMENTE");
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error!!! Algo salió mal al eliminar el Cliente", ex);
+            }
+
         }
 
         [AllowAnonymous]
@@ -46,44 +62,96 @@ namespace APINegocio.Controllers
         [ResponseCache(CacheProfileName = "Default30Seg")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetCustomers()
         {
-            var getCustomer = await _LogiticaServices.GetCliente();
-            if (getCustomer == null)
-                return NotFound();         
-            return Ok(getCustomer);
+            try
+            {
+                var getCustomer = await _logiticaServices.GetCliente();
+                if (getCustomer == null)
+                    return NotFound();
+                return Ok(getCustomer);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error! Algo salió mal al mostrar todos los clientes", ex);
+            }
+
         }
 
         [AllowAnonymous]
-        [HttpGet("Id")]
+        [HttpGet("{Id:int}")]
         [ResponseCache(CacheProfileName = "Default30Seg")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Get(int Id)
+        public async Task<IActionResult> GetByCustomerId(int Id)
         {
-            var getCustomerById = await _LogiticaServices.GetCustomersByIdAsync(Id);
-            if (getCustomerById is null)
-                return NotFound("ERROR! EL CLIENTE NO FUE ENCONTRADO");
+            try
+            {
+                var getCustomerById = await _logiticaServices.GetCustomersByIdAsync(Id);
+                if (getCustomerById is null)
+                    return NotFound("ERROR! EL CLIENTE NO FUE ENCONTRADO");
 
-            return Ok(getCustomerById);
+                return Ok(getCustomerById);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error! Algo salió mal al mostrar el clientes solicitado, por favor verificar que el ID es correcto", ex);
+            }
+
         }
 
         [AllowAnonymous]
-        [HttpGet("name")]
+        [HttpGet("~/GetByCustomerName")]
         [ResponseCache(CacheProfileName = "Default30Seg")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Get(Customers model) 
+        public async Task<IActionResult> GetByCustomerName(string nombre)
         {
-            var getCustomerName = await _LogiticaServices.GetCustomersByNameAsync(model.CustomerName);
-            if (getCustomerName == null)
-                return NotFound("ERROR!... EL NOMBRE DEL FUE CLIENTE ENCONTRADO");
+            try
+            {
+                var getCustomerName = await _logiticaServices.GetCustomersByNameAsync(nombre);
+                if (getCustomerName == null)
+                    return NotFound("ERROR!... EL NOMBRE DEL FUE CLIENTE ENCONTRADO");
 
-            return Ok(getCustomerName);
+                return Ok(getCustomerName);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error!!! Algo salió mal al mostrar el cliente solicitado, por favor verificar que el nombre esta correcto", ex);
+            }
+
+        }
+
+        [AllowAnonymous]
+        [HttpGet("~/GetByCustomerCodePostal")]
+        [ResponseCache(CacheProfileName = "Default30Seg")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetByCustomerCodePostal(string codePostal)
+        {
+            try
+            {
+                var _getCustomerCodePostal = await _logiticaServices.GetByCustomersByCodeAsync(codePostal);
+                if (_getCustomerCodePostal == null)
+                    return NotFound("ERROR!... EL NOMBRE DEL FUE CLIENTE ENCONTRADO");
+
+                return Ok(_getCustomerCodePostal);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error!!! No fue posible mostrar los clientes", ex);
+            }
+
         }
 
 
@@ -95,12 +163,32 @@ namespace APINegocio.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> POST(CustomerPOSTDto modelDto)
         {
-            var postCustomer = _Mapper.Map<Customers>(modelDto);
-            _LogiticaServices.Add(postCustomer);
+            try
+            {
+                if (modelDto != null)
+                {
+                    var postCustomer = _mapper.Map<Customers>(modelDto);
+                    postCustomer.IsDeleted = false;
+                    postCustomer.IsDeletedAt = null;
+                    postCustomer.IsModified = false;
+                    postCustomer.IsUpdatedDate = null;
+                    postCustomer.CreatedDate = DateTime.Now;
+                    postCustomer.IsStatu = true;
 
-            if (await _LogiticaServices.SaveAll())
-                return Ok(postCustomer);
-            return BadRequest();
+                    _logiticaServices.Add(postCustomer);
+
+                    if (await _logiticaServices.SaveAll())
+                        return Ok(postCustomer);
+                }
+
+                return BadRequest("Error!!! El registro no puedes ser enviardo vacio");
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error! Algo salió mal al agregar el nuevo cliente", ex);
+            }
+
         }
 
         [HttpPut("Id/{Id}")]
@@ -110,19 +198,36 @@ namespace APINegocio.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> PUT(int Id, CustomerPUTDto modelDto)
         {
-            if (Id != modelDto.CustomerId)
-                return BadRequest("ERROR!... EL ID QUE HAZ INGRESADO NO EXISTE");
 
-            var putCustomer = await _LogiticaServices.GetCustomersByIdAsync(modelDto.CustomerId!);
-            if (putCustomer is null)
-                return BadRequest();
+            try
+            {
+                if (Id != modelDto.CustomerId)
+                    return BadRequest("ERROR!... EL ID QUE HAZ INGRESADO NO EXISTE");
 
-            _Mapper.Map(modelDto, putCustomer);
+                var putCustomer = await _logiticaServices.GetCustomersByIdAsync(modelDto.CustomerId!);
+                if (putCustomer is null)
+                    return BadRequest();
 
-            if(!await _LogiticaServices.SaveAll())
-                return BadRequest("EL CLIENTE HAZ SIDO MODIFICADO CORRECTAMENTE");
+                modelDto.IsDeleted = false;
+                modelDto.IsUpdatedDate = DateTime.Now;
+                modelDto.IsModified = true;
+                modelDto.IsDeletedAt = null;
+                modelDto.IsStatu = true;
+                modelDto.CreatedDate = null;
 
-            return Ok(putCustomer);
+                _mapper.Map(modelDto, putCustomer);
+
+                if (!await _logiticaServices.SaveAll())
+                    return BadRequest("EL CLIENTE HAZ SIDO MODIFICADO CORRECTAMENTE");
+
+                return Ok(putCustomer);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error!!! No fue posible editar el registro, por favor verificar el ID o si envio un dato vacio", ex);
+            }
+
         }
     }
 }

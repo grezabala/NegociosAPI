@@ -81,6 +81,9 @@ namespace APINegocio.Aplications.IoCExtensions
             services.AddScoped(typeof(ILogisticaService), typeof(LogisticaService));
             services.AddScoped<ILocationService, LocationService>();
             services.AddScoped(typeof(IBranchOfficesService), typeof(BranchOfficesService));
+            services.AddScoped<ITickersService, TickersService>();
+            services.AddScoped(typeof(IInventoryService), typeof(InventoryService));
+            services.AddScoped<IShoppingService, ShoppingService>();
 
             services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly); //PARA LA INJENCCION DE AUTOMAPPER
 

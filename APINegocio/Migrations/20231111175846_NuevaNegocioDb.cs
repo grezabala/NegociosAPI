@@ -23,7 +23,7 @@ namespace APINegocio.Migrations
                     NumberInventory = table.Column<int>(type: "int", unicode: false, nullable: false),
                     CodigoInventory = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
                     DateCread = table.Column<DateTime>(type: "datetime2", unicode: false, nullable: false),
-                    StoreId = table.Column<int>(type: "int", unicode: false, nullable: false),
+                    //StoreId = table.Column<int>(type: "int", unicode: false, nullable: false),
                     ShoppingId = table.Column<int>(type: "int", unicode: false, nullable: false),
                     ProductoId = table.Column<int>(type: "int", unicode: false, nullable: false),
                     ProveedorId = table.Column<int>(type: "int", unicode: false, nullable: false),
@@ -35,7 +35,7 @@ namespace APINegocio.Migrations
                     IsUpdatedAt = table.Column<DateTime>(type: "datetime2", unicode: false, nullable: false),
                     ProveedoresProveedorId = table.Column<int>(type: "int", nullable: true),
                     ProveedosProductId = table.Column<int>(type: "int", nullable: true),
-                    StoresId = table.Column<int>(type: "int", nullable: true)
+                    StorId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -56,11 +56,11 @@ namespace APINegocio.Migrations
                         principalTable: "Shopping",
                         principalColumn: "ShoppingId",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Inventory_Stores_StoresId",
-                        column: x => x.StoresId,
-                        principalTable: "Stores",
-                        principalColumn: "StoresId");
+                    //table.ForeignKey(
+                    //    name: "FK_Inventory_Stores_StoresId",
+                    //    column: x => x.StorId,
+                    //    principalTable: "Stores",
+                    //    //principalColumn: "StoresId");
                 });
 
             migrationBuilder.CreateIndex(

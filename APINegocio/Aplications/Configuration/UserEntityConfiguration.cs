@@ -33,6 +33,8 @@ namespace APINegocio.Aplications.Configuration
                 .IsUnicode(false)
                 .IsRequired();
 
+            builder.HasQueryFilter(x => x.IsDeleted);
+
             builder.Property(e => e.IsAsset)
                .IsUnicode(false)
                 .IsRequired();

@@ -1,4 +1,5 @@
 ﻿using APINegocio.Aplications.Data.Services.Interfaz;
+using APINegocio.Aplications.Data.Services.Repository;
 using APINegocio.Aplications.Dtos;
 using APINegocio.Aplications.Entities;
 using AutoMapper;
@@ -11,55 +12,60 @@ namespace APINegocio.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class InventoryController : ControllerBase
     {
-        private readonly ILogisticaService _LogisticaService;
-        private readonly IMapper Mapper;
+        private readonly IInventoryService _inventoryService;
+        private readonly IMapper _mapper;
 
-        public InventoryController(ILogisticaService logisticaService, IMapper mapper)
+        public InventoryController(IInventoryService inventoryService, IMapper mapper)
         {
-            _LogisticaService = logisticaService;
-            Mapper = mapper;
+            _inventoryService = inventoryService;
+            _mapper = mapper;
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpGet]
         [ResponseCache(CacheProfileName = "Default30Seg")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [Authorize]
-        public async Task<IActionResult> Get()
+        //[Authorize]
+        public async Task<IActionResult> GetInventory()
         {
             try
             {
-                var get = await _LogisticaService.GetInventoryAsync();
-                if (get == null)
-                    return NotFound();
-                return Ok(get);
+                var _getInventario = await _inventoryService.GetInventoryAsync();
+                var listDto = new List<InventoryDto>();
+
+                foreach (var inventory in _getInventario)
+                {
+                    listDto.Add(_mapper.Map<InventoryDto>(inventory));
+                
+                }
+
+                return Ok(listDto);
             }
             catch (Exception ex)
             {
 
-                return BadRequest(ex.Message);
+                throw new Exception("Error!", ex);
             }
 
         }
 
-        [AllowAnonymous]    
-        [HttpGet("Id/{Id}")]
+        //[AllowAnonymous]
+        [HttpGet("Id/{Id:int}")]
         [ResponseCache(CacheProfileName = "Default30Seg")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Authorize]
-        public async Task<IActionResult> Get([FromBody] int Id)
+        public async Task<IActionResult> Get(int Id)
         {
 
             try
             {
-                var getById = await _LogisticaService.GetByIdInventory(Id);
+                var getById = await _inventoryService.GetByInventoryId(Id);
                 if (getById == null)
                     return NotFound("ERROR! NO SE ENCONTRO NINGUN INVENTARIO ASOCIADO A ESE ID");
                 return Ok(getById);
@@ -67,25 +73,25 @@ namespace APINegocio.Controllers
             catch (Exception ex)
             {
 
-                return BadRequest(ex.Message);
+                throw new Exception("Error!", ex);
             }
 
         }
 
-        [AllowAnonymous]
-        [HttpGet("number/{number}")]
+        //[AllowAnonymous]
+        [HttpGet("~/GetInventoryByNumber")]
         [ResponseCache(CacheProfileName = "Default30Seg")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Authorize]
-        public async Task<IActionResult> GetNumber([FromBody] int number)
+        //[Authorize]
+        public async Task<IActionResult> GetInventoryByNumber(int number)
         {
 
             try
             {
-                var getNumber = await _LogisticaService.GetByNumberInventories(number);
+                var getNumber = await _inventoryService.GetByInventoriesNumber(number);
                 if (getNumber == null)
                     return NotFound("ERROR! NO SE ENCONTRO NINGUN INVENTARIO ASOCIADO A ESTE NUMERO");
 
@@ -99,19 +105,19 @@ namespace APINegocio.Controllers
 
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpGet("name/{name}")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Authorize]
-        public async Task<IActionResult> GetName([FromBody] string name)
+        //[Authorize]
+        public async Task<IActionResult> GetName(string name)
         {
 
             try
             {
-                var getName = await _LogisticaService.GetByNameInventory(name);
+                var getName = await _inventoryService.GetByInventoryName(name);
                 if (getName == null)
                     return NotFound("ERROR! NO SE ENCONTRO NINGUN INVENTARIO ASOCIADO A ESTE NOMBRE");
 
@@ -125,18 +131,18 @@ namespace APINegocio.Controllers
 
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpGet("code/{code}")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Authorize]
-        public async Task<IActionResult> GetCode([FromBody] string code)
+        //[Authorize]
+        public async Task<IActionResult> GetCode(string code)
         {
             try
             {
-                var getCode = await _LogisticaService.GetByCodeInventory(code);
+                var getCode = await _inventoryService.GetByCodeInventory(code);
                 if (getCode == null)
                     return NotFound("ERROR! NO SE ENCONTRO NINGUN INVENTARIO ASOCIADO A ESTE CODIGO");
 
@@ -149,24 +155,23 @@ namespace APINegocio.Controllers
             }
         }
 
-
         [HttpDelete("Id/{Id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [Authorize]
-        public async Task<IActionResult> Deleted([FromBody] int Id)
+        //[Authorize]
+        public async Task<IActionResult> Deleted(int Id)
         {
             try
             {
-                var getDeleted = await _LogisticaService.GetByIdInventory(Id);
+                var getDeleted = await _inventoryService.GetByInventoryId(Id);
                 if (getDeleted == null)
                     return NotFound("ERROR!... EL PRODUCTO QUE DESEA ELIMINAR NO FUE INVENTARIO");
 
-                _LogisticaService.Remove(getDeleted);
-                if (!await _LogisticaService.SaveAll())
+                var _deleted = _inventoryService.GetByInventoryId(Id);
+                if (!await _inventoryService.IsDeleted(await _deleted))
                     return BadRequest("ERROR!... NO SE PUDO ELIMINAR EL INVENTARIO");
 
                 return Ok("INVENTARIO ELIMINADO CORRECTAMENTE");
@@ -185,17 +190,24 @@ namespace APINegocio.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> POST(InventoryPOSTDto pOSTDto)
         {
+            if (_inventoryService.IsExisteGetInventarioByCode(pOSTDto.CodigoInventory))
+                return BadRequest("Este Inventario ya fue registrado");
 
-            var add = Mapper.Map<Inventory>(pOSTDto);
-            _LogisticaService.Add(add);
+            if (_inventoryService.IsExisteGetInventarioByNumber(pOSTDto.NumberInventory))
+                return BadRequest("Este Inventario ya existe");
 
-            if (await _LogisticaService.SaveAll())
-                return Ok(add);
-            return BadRequest();
+            var add = _mapper.Map<Inventory>(pOSTDto);
 
+            if (!_inventoryService.IsCread(add))
+            {
+                ModelState.AddModelError("", "Algo salió mal al registrar el nuevo Inventarios");
+                StatusCode(500, ModelState);
+            }
+
+            return Ok(add);
         }
 
         [HttpPut("Id/{Id}")]
@@ -203,7 +215,7 @@ namespace APINegocio.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> PUT(int Id, [FromBody] InventoryPUTDto pUTDto)
         {
             try
@@ -211,15 +223,15 @@ namespace APINegocio.Controllers
                 if (Id != pUTDto.InventoryId)
                     return BadRequest("ERROR!... EL ID QUE ACABA DE INGRESAR NO COINCIDE CON NINGUN INVENTARIO");
 
-                var getInventario = await _LogisticaService.GetByIdInventory(pUTDto.InventoryId);
+                var getInventario = await _inventoryService.GetByInventoryId(pUTDto.InventoryId);
 
                 if (getInventario is null)
                     return BadRequest("NO SE ENCONTRO NINGUN INVENTARIO");
 
-                Mapper.Map(getInventario, pUTDto);
+                _mapper.Map(pUTDto, getInventario);
 
-                if (!await _LogisticaService.SaveAll())
-                    return NotFound("ERROR! AL GUARDAR LOS CAMBIOS");
+                if (_inventoryService.IsSaveAll())
+                    return NoContent();
 
                 return Ok(getInventario);
             }

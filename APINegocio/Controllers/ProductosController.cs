@@ -9,20 +9,20 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace APINegocio.API.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ProductosController : ControllerBase
     {
-        private readonly IRepositoryService _RepositoryService;
+        private readonly IRepositoryService _repositoryService;
 
-        private readonly IMapper _Mapper;
-
+        private readonly IMapper _mapper;
 
         public ProductosController(IRepositoryService repositoryService, IMapper mapper)
         {
-            this._Mapper = mapper;
-            this._RepositoryService = repositoryService;
+            this._repositoryService = repositoryService;
+            this._mapper = mapper;
+
         }
 
         [HttpDelete("Id/{Id}")]
@@ -33,15 +33,24 @@ namespace APINegocio.API.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Delete(int Id)
         {
-            var deleteProducto = await _RepositoryService.GetProductosByIdAsync(Id);
-            if (deleteProducto == null)
-                return NotFound("ERROR!... EL PRODUCTO QUE DESEA ELIMINAR NO FUE ENCONTRADO");
+            try
+            {
+                var deleteProducto = await _repositoryService.GetProductosByIdAsync(Id);
+                if (deleteProducto == null)
+                    return NotFound("ERROR!... EL PRODUCTO QUE DESEA ELIMINAR NO FUE ENCONTRADO");
 
-            _RepositoryService.Delete(deleteProducto);
-            if (!await _RepositoryService.SaveAll())
+                if (!_repositoryService.GetProductosByDeleted(deleteProducto))
+                {
+                    return Ok("EL PRODUCTO FUE ELIMINADO CORRECTAMENTE");
+                }
                 return BadRequest("ERROR!... NO SE PUDO ELIMINAR EL PRODUCTO");
+            }
+            catch (Exception ex)
+            {
 
-            return Ok("EL PRODUCTO FUE ELIMINADO CORRECTAMENTE");
+                throw new Exception("Error...! Algo salió mal al eliminar el producto, por favor verificar que el producto exista.", ex);
+            }
+
         }
 
         [AllowAnonymous]
@@ -49,44 +58,84 @@ namespace APINegocio.API.Controllers
         [ResponseCache(CacheProfileName = "Default30Seg")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetProductos()
         {
-            var getProductos = await _RepositoryService.GetProductos();
-            return Ok(getProductos);
+            try
+            {
+                var _getProductos = await _repositoryService.GetProductos();
+                var _getProductosDto = new List<ProductosDto>();
+
+                foreach (var productos in _getProductos)
+                {
+                    _getProductosDto.Add(_mapper.Map<ProductosDto>(productos));
+                }
+
+                return Ok(_getProductosDto);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...! No fue posible mostrar todos los productos, por favor vuelva a intentarlo.", ex);
+            }
+
+            //var getProductos = await _repositoryService.GetProductos();
+            //return Ok(getProductos);
         }
 
         [AllowAnonymous]
-        [HttpGet("Id")]
+        [HttpGet("{Id:int}")]
         [ResponseCache(CacheProfileName = "Default30Seg")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Get(int Id)
+        public async Task<IActionResult> GetProductoById(int Id)
         {
-            var getById = await _RepositoryService.GetProductosByIdAsync(Id);
+            try
+            {
+                var getById = await _repositoryService.GetProductosByIdAsync(Id);
 
-            if (getById == null)
-                return NotFound("ERROR!... EL PRODUCTO NO FUE ENCONTRADO");
+                var _getByIdDto = _mapper.Map<ProductosDto>(getById);
 
-            return Ok(getById);
+                if (_getByIdDto == null)
+                    return NotFound("ERROR!... EL PRODUCTO NO FUE ENCONTRADO");
+
+                return Ok(_getByIdDto);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...! No fue posible mostrar el producto, por favor validar que el ID sea el correcto.", ex);
+            }
+
         }
 
         [AllowAnonymous]
-        [HttpGet("name/{name}")] //Ruta personalizada para evitar la ambiguedad entre metodo
+        [HttpGet("{name}")] //Ruta personalizada para evitar la ambiguedad entre metodo
         [ResponseCache(CacheProfileName = "Default30Seg")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Get(Productos model)
+        public async Task<IActionResult> GetProductoByName(string nombre)
         {
-            var getName = await _RepositoryService.GetProveedoresByNameAsync(model.ProductName);
-                              
-            if (getName == null)
-                return NotFound("ERROR!... EL PRODUCTO NO FUE ENCONTRADO");
+            try
+            {
+                var getName = await _repositoryService.GetProductosByNameAsync(nombre);
 
-            return Ok(getName);
+                var _getNameDto = _mapper.Map<ProductosDto>(getName);
+
+                if (_getNameDto == null)
+                    return NotFound("ERROR!... EL PRODUCTO NO FUE ENCONTRADO");
+
+                return Ok(_getNameDto);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...! No fue posible mostrar el producto, por favor validar que el nombre sea el correcto.", ex);
+            }
+
         }
 
         [HttpPost]
@@ -97,6 +146,32 @@ namespace APINegocio.API.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Post(ProductosPOSTDto modelDto)
         {
+            //REALIZAR UN METODO GET PARA FILTRAR POR CODIGO
+            try
+            {
+                var productoNew = _mapper.Map<Productos>(modelDto);
+
+                productoNew.IsAsset = true;
+                productoNew.IsDeleted = false;
+                productoNew.CreatedDate = DateTime.Now;
+                productoNew.IsApproved = true;
+                productoNew.IsApprovedAt = DateTime.Now;
+                productoNew.IsDeletedAt = null;
+                productoNew.IsDateModified = null;
+
+                _repositoryService.Add(productoNew);
+
+                if (await _repositoryService.SaveAll())
+                    return Ok(productoNew);
+
+                return BadRequest();
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...! No fue posible registrar el nuevo producto. Por favor vuelva a intentarlo.", ex);
+            }
+
             #region CODIGO EN CASO DE QUE NO SE VAYA IMPLEMENTAR MAPPER
             //var productoNew = new Productos();
 
@@ -110,14 +185,6 @@ namespace APINegocio.API.Controllers
             //productoNew.IsDeleted = false; //Para indicar si un producto fue eliminado
             //productoNew.IsApproved = true; //Para indicar si un producto fue aprovado
             #endregion
-
-            var productoNew = _Mapper.Map<Productos>(modelDto);
-
-            _RepositoryService.Add(productoNew);
-
-            if (await _RepositoryService.SaveAll())
-                return Ok(productoNew);
-            return BadRequest();
         }
 
         [HttpPut("Id/{Id}")]
@@ -127,22 +194,28 @@ namespace APINegocio.API.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Put(int Id, [FromBody] ProductoPUTDto modelDto)
         {
+            try
+            {
+                if (Id != modelDto.ProductId)
+                    return BadRequest("ERROR!... EL ID QUE ACABA DE INGRESAR NO COINCIDE CON NINGUN PRODUCTO");
 
-            if (Id != modelDto.ProductId)
-                return BadRequest("ERROR!... EL ID QUE ACABA DE INGRESAR NO COINCIDE CON NINGUN PRODUCTO");
+                var updatedProducto = await _repositoryService.GetProductosByIdAsync(modelDto.ProductId);
 
-            var updatedProducto = await _RepositoryService.GetProductosByIdAsync(modelDto.ProductId);
+                if (updatedProducto == null)
+                    return BadRequest();
 
-            if (updatedProducto == null)
-                return BadRequest();
+                _mapper.Map(modelDto, updatedProducto);
 
-            _Mapper.Map(modelDto, updatedProducto);
+                if (!await _repositoryService.SaveAll())
+                    return NoContent();
 
-            if (!await _RepositoryService.SaveAll())
-                return NoContent();
+                return Ok(updatedProducto);
+            }
+            catch (Exception ex)
+            {
 
-            return Ok(updatedProducto);
-
+                throw new Exception("Error...! No fue posible editar el producto. Por favor vuelva a intentarlo.", ex);
+            }
 
             #region CODIGO EN CASO QUE NO SE VAYA A IMPLEMENTAR MAPPER
             /*

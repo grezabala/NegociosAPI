@@ -17,48 +17,67 @@ namespace APINegocio.Aplications.Configuration
 
             builder.HasKey(x => x.ProductId);
             builder.Property(x => x.ProductId)
-                .IsUnicode(false)
-                .IsRequired();
+                           .IsUnicode(false)
+                           .IsRequired();
+
+            builder.Property(x => x.ProductName)
+                         .IsUnicode(false)
+                         .HasMaxLength(250)
+                         .IsRequired();
+
+            builder.Property(x => x.Description)
+                          .IsUnicode(false)
+                          .HasMaxLength(550)
+                          .IsRequired();
+
+            builder.Property(x => x.Referencia)
+                          .IsUnicode(false)
+                          .HasMaxLength(550)
+                          .IsRequired();
+
+            builder.Property(x => x.Price)
+                        .IsUnicode(false)
+                        .HasColumnType("Decimal(18,2)")
+                        .IsRequired();
+
+            builder.Property(x => x.CreatedDate)
+                        .IsUnicode(false);
+            //.IsRequired();
 
 
             builder.Property(x => x.IsAsset)
-                .IsUnicode(false)
-                .IsRequired();
-
-            builder.Property(x => x.IsApproved)
-                .IsUnicode(false)
-                .IsRequired();
-
-            builder.Property(x => x.Price)
-                .IsUnicode(false)
-                .HasColumnType("Decimal(18,2)")
-                .IsRequired();
-
-            builder.Property(x => x.Description)
-                .IsUnicode(false)
-                .HasMaxLength(550)
-                .IsRequired();
-
-            builder.Property(x => x.IsApproved)
-                .IsUnicode(false)
-                .IsRequired();
+                         .IsUnicode(false);
+            //.IsRequired();
 
             builder.Property(x => x.IsDeleted)
-                .IsUnicode(false)
-                .IsRequired();
+                          .IsUnicode(false);
+            //.IsRequired();
+
+            builder.Property(x => x.IsApproved)
+                         .IsUnicode(false);
+            //.IsRequired();
+
+            builder.Property(x => x.IsDateModified)
+                          .IsUnicode(false);
+
+            builder.Property(x => x.IsModified)
+                        .IsUnicode(false);
 
             builder.Property(x => x.IsDeletedAt)
-                .IsUnicode(false)
-                .IsRequired();
+                         .IsUnicode(false);
+                         //.IsRequired();
 
-            builder.Property(x => x.ProductName)
-                .IsUnicode(false)
-                .HasMaxLength(250)
-                .IsRequired();
+            builder.Property(x => x.IsApprovedAt)
+                         .IsUnicode(false); //Agregado 26/06/24
 
-            builder.Property(x => x.CreatedDate)
-                .IsUnicode(false)
-                .IsRequired();
+            builder.Property(x => x.ProductCode)
+                           .IsUnicode(false); //Agregado 26/06/24
+                                              //builder.Property(x => x.IsApproved)
+                                              //    .IsUnicode(false)
+                                              //    .IsRequired();
+
+            builder.HasQueryFilter(x => !x.IsDeleted);
+
         }
     }
 

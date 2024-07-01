@@ -32,6 +32,8 @@ namespace APINegocio.Aplications.Configuration
                 .IsUnicode(false)
                 .IsRequired();
 
+            builder.HasQueryFilter(x => !x.IsDeleted);
+
             builder.Property(x => x.IsDeletedAt)
                 .IsUnicode(false)
                 .IsRequired();
@@ -56,6 +58,11 @@ namespace APINegocio.Aplications.Configuration
             builder.Property(x => x.WhenDate)
                 .IsUnicode(false)
                 .IsRequired();
+
+            builder.Property(x => x.CodeCountries)
+                .IsUnicode(false); //Agregado 26/06/24
+
+
         }
     }
 }

@@ -16,67 +16,76 @@ namespace APINegocio.Aplications.Configuration
             base.Configure(builder);
 
             builder.HasKey(x => x.ShoppingId);
+
             builder.Property(x => x.ShoppingId)
-                .IsRequired();
+                         .IsRequired();
 
-            builder.Property(x => x.IsAsset)
-                 .IsUnicode(false)
-                .IsRequired();
-
-            builder.Property(x => x.IsDeleted)
-                  .IsUnicode(false)
-                .IsRequired();
-
-            builder.Property(x => x.IsModifedShopping)
-                 .IsUnicode(false)
-                .IsRequired();
-
-            builder.Property(x => x.IsModified)
-                .IsUnicode(false)
-                .IsRequired();
-
-            builder.Property(x => x.IsShoppingDate)
-                 .IsUnicode(false)
-                .IsRequired();
-
-            builder.Property(x => x.NumberShopping)
-                .IsUnicode(false)
-                .HasColumnType("INT")
-                .IsRequired();
-
-            builder.Property(x => x.ShoppingCode)
-                .IsUnicode(false)
-                .HasMaxLength(30)
-                .IsRequired();
-
-            builder.Property(x => x.ShoppingCount)
-                .IsUnicode(false)
-                .HasColumnType("INT")
-                .IsRequired();
-
-            builder.Property(x => x.ShoppingDescription)
-                .IsUnicode(false)
-                .HasMaxLength(550)
-                .IsRequired();
+            builder.Property(x => x.OrderId)
+                        .IsUnicode(false)
+                        .IsRequired();
 
             builder.Property(x => x.ShoppingName)
-                .IsUnicode(false)
-                .HasMaxLength(250)
-                .IsRequired();
+                          .IsUnicode(false)
+                          .HasMaxLength(250)
+                          .IsRequired();
+
+
+            builder.Property(x => x.ShoppingDescription)
+                        .IsUnicode(false)
+                        .HasMaxLength(550)
+                        .IsRequired();
 
             builder.Property(x => x.ShoppingStatus)
-                .IsUnicode(false)
-                .HasColumnType("INT")
-                .IsRequired();
+                         .IsUnicode(false)
+                         .HasColumnType("INT");
+            //.IsRequired();
+
+            builder.Property(x => x.ShoppingCount)
+                           .IsUnicode(false)
+                           .HasColumnType("INT")
+                           .IsRequired();
 
             builder.Property(x => x.ShoppingTitle)
-               .IsUnicode(false)
-                .HasMaxLength(250)
-                .IsRequired();
+                           .IsUnicode(false)
+                            .HasMaxLength(250)
+                            .IsRequired();
+
+            builder.Property(x => x.ShoppingCode)
+                           .IsUnicode(false)
+                           .HasMaxLength(30)
+                           .IsRequired();
+
+            builder.Property(x => x.NumberShopping)
+                        .IsUnicode(false)
+                        .HasColumnType("INT")
+                        .IsRequired();
+
+            builder.Property(x => x.IsShoppingDate)
+                           .IsUnicode(false);
+            //.IsRequired();
+
+            builder.Property(x => x.IsDeleted)
+                          .IsUnicode(false);
+            //.IsRequired();
+
+            builder.Property(x => x.IsAsset)
+                         .IsUnicode(false);
+            //.IsRequired();
+
+            builder.Property(x => x.IsModifedShopping)
+                          .IsUnicode(false);
+            //.IsRequired();
+
+            builder.Property(x => x.IsModified)
+                         .IsUnicode(false);
+            // .IsRequired();
 
             builder.Property(x => x.IsDeletedAt)
-                .IsUnicode(false)
-                .IsRequired();
+                         .IsUnicode(false);
+            //.IsRequired();
+
+            builder.HasQueryFilter(x => !x.IsDeleted);
+
         }
     }
 }

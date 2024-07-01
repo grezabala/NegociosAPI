@@ -29,6 +29,21 @@ namespace APINegocio.Aplications.Data.Services.Repository
             return await _APINegociosDb.SaveChangesAsync() > 0;
         }
 
+        public bool LoadAll()
+        {
+            try
+            {
+                return _APINegociosDb.SaveChanges() >= 0 ? true : false;
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error! No fué posible cargar el registro eliminado", ex);
+
+            }
+        }
+
+
         #region CITY METODH
         public async Task<City> GetByCodeCityAsync(string code)
         {
@@ -54,6 +69,29 @@ namespace APINegocio.Aplications.Data.Services.Repository
             var getCity = await _APINegociosDb.City.ToListAsync();
             return getCity;
         }
+
+        public bool GetByCityIsDeleted(City city)
+        {
+            try
+            {
+                var _IsDeletedCity = _APINegociosDb.Set<City>().Find(city.CityId);
+                if (_IsDeletedCity != null)
+                {
+                    _IsDeletedCity.IsDeleted = true;
+                    _IsDeletedCity.IsStatus = false;
+                    _IsDeletedCity.IsDeletedAt = DateTime.Now;
+                    _APINegociosDb.SaveChanges();
+
+                }
+
+                return LoadAll();
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error! No fue posible eliminar el registro", ex);
+            }
+        }
         #endregion
 
         #region COUNTRIES METODH
@@ -75,12 +113,35 @@ namespace APINegocio.Aplications.Data.Services.Repository
             return getConuntry;
         }
 
+        public bool GetByCountriesIsDeleted(Countries countries)
+        {
+            try
+            {
+                var _getIsDeleted = _APINegociosDb.Set<Countries>().Find(countries.CountryId);
+                if (_getIsDeleted != null)
+                {
+                    _getIsDeleted.IsDeleted = true;
+                    _getIsDeleted.IsStatud = false;
+                    _getIsDeleted.IsDeletedAt = DateTime.Now;
+                    _APINegociosDb.SaveChanges();
+
+                }
+
+                return LoadAll();
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error! No fue posible eliminar el registro", ex);
+            }
+        }
+
         #endregion
 
         #region STORES METODH
         public async Task<Stores> GetByIdStoresAsync(int Id)
         {
-            var getByIdStors = await _APINegociosDb.Stores.FirstOrDefaultAsync(x => x.StoresId == Id);
+            var getByIdStors = await _APINegociosDb.Stores.FirstOrDefaultAsync(x => x.StorId == Id);
             return getByIdStors!;
         }
 
@@ -95,9 +156,29 @@ namespace APINegocio.Aplications.Data.Services.Repository
             var getStores = await _APINegociosDb.Stores.ToListAsync();
             return getStores;
         }
+
+        public bool GetByStoreIsDeleted(Stores stores)
+        {
+            try
+            {
+                var _getIsDeleted = _APINegociosDb.Set<Stores>().Find(stores.StorId);
+                if (_getIsDeleted != null)
+                {
+                    _getIsDeleted.IsDeleted = true;
+                    _getIsDeleted.IsStatud = false;
+                    _getIsDeleted.IsDeletedAt = DateTime.Now;
+                    _APINegociosDb.SaveChanges();
+
+                }
+
+                return LoadAll();
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error! No fue posible eliminar el registro", ex);
+            }
+        }
         #endregion
-
-
-      
     }
 }

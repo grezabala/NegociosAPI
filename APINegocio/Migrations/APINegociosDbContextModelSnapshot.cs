@@ -149,7 +149,7 @@ namespace APINegocio.Migrations
                         .IsUnicode(false)
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("IsDeletedAt")
+                    b.Property<DateTime?>("IsDeletedAt")
                         .IsUnicode(false)
                         .HasColumnType("datetime2");
 
@@ -241,8 +241,7 @@ namespace APINegocio.Migrations
                         .IsUnicode(false)
                         .HasColumnType("bit");
 
-                    b.Property<DateTime?>("IsDeletedAt")
-                        .IsRequired()
+                    b.Property<DateTime>("IsDeletedAt")
                         .IsUnicode(false)
                         .HasColumnType("datetime2");
 
@@ -250,8 +249,7 @@ namespace APINegocio.Migrations
                         .IsUnicode(false)
                         .HasColumnType("bit");
 
-                    b.Property<DateTime?>("IsUpdateAt")
-                        .IsRequired()
+                    b.Property<DateTime>("IsUpdateAt")
                         .IsUnicode(false)
                         .HasColumnType("datetime2");
 
@@ -272,6 +270,10 @@ namespace APINegocio.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CountryId"));
+
+                    b.Property<string>("CodeCountries")
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)");
 
                     b.Property<string>("CountryName")
                         .IsRequired()
@@ -344,13 +346,17 @@ namespace APINegocio.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(150)");
 
+                    b.Property<string>("CodeCustomer")
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)");
+
                     b.Property<string>("Country")
                         .IsRequired()
                         .HasMaxLength(150)
                         .IsUnicode(false)
                         .HasColumnType("varchar(150)");
 
-                    b.Property<DateTime>("CreatedDate")
+                    b.Property<DateTime?>("CreatedDate")
                         .IsUnicode(false)
                         .HasColumnType("datetime2");
 
@@ -382,7 +388,7 @@ namespace APINegocio.Migrations
                         .IsUnicode(false)
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("IsDeletedAt")
+                    b.Property<DateTime?>("IsDeletedAt")
                         .IsUnicode(false)
                         .HasColumnType("datetime2");
 
@@ -394,7 +400,7 @@ namespace APINegocio.Migrations
                         .IsUnicode(false)
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("IsUpdatedDate")
+                    b.Property<DateTime?>("IsUpdatedDate")
                         .IsUnicode(false)
                         .HasColumnType("datetime2");
 
@@ -504,7 +510,7 @@ namespace APINegocio.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<DateTime>("DateCread")
+                    b.Property<DateTime?>("DateCread")
                         .IsUnicode(false)
                         .HasColumnType("datetime2");
 
@@ -520,7 +526,7 @@ namespace APINegocio.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(250)");
 
-                    b.Property<DateTime>("IsDateCread")
+                    b.Property<DateTime?>("IsDateCread")
                         .IsUnicode(false)
                         .HasColumnType("datetime2");
 
@@ -528,7 +534,7 @@ namespace APINegocio.Migrations
                         .IsUnicode(false)
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("IsDeletedAt")
+                    b.Property<DateTime?>("IsDeletedAt")
                         .IsUnicode(false)
                         .HasColumnType("datetime2");
 
@@ -536,11 +542,15 @@ namespace APINegocio.Migrations
                         .IsUnicode(false)
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsStatus")
+                        .IsUnicode(false)
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsUpdated")
                         .IsUnicode(false)
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("IsUpdatedAt")
+                    b.Property<DateTime?>("IsUpdatedAt")
                         .IsUnicode(false)
                         .HasColumnType("datetime2");
 
@@ -572,11 +582,15 @@ namespace APINegocio.Migrations
                         .IsUnicode(false)
                         .HasColumnType("int");
 
-                    b.Property<int>("StoreId")
+                    b.Property<int>("Stock")
                         .IsUnicode(false)
                         .HasColumnType("int");
 
-                    b.Property<int?>("StoresId")
+                    b.Property<int>("StorId")
+                        .IsUnicode(false)
+                        .HasColumnType("int");
+
+                    b.Property<int?>("StorId")
                         .HasColumnType("int");
 
                     b.HasKey("InventoryId");
@@ -587,7 +601,7 @@ namespace APINegocio.Migrations
 
                     b.HasIndex("ShoppingId");
 
-                    b.HasIndex("StoresId");
+                    b.HasIndex("StorId");
 
                     b.ToTable("Inventory", (string)null);
                 });
@@ -724,6 +738,10 @@ namespace APINegocio.Migrations
                         .IsUnicode(false)
                         .HasColumnType("int");
 
+                    b.Property<string>("PaymentCode")
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)");
+
                     b.Property<string>("Reservado")
                         .IsRequired()
                         .HasMaxLength(250)
@@ -764,6 +782,10 @@ namespace APINegocio.Migrations
                         .IsUnicode(false)
                         .HasColumnType("bit");
 
+                    b.Property<DateTime>("IsApprovedAt")
+                        .IsUnicode(false)
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("IsAsset")
                         .IsUnicode(false)
                         .HasColumnType("bit");
@@ -785,6 +807,10 @@ namespace APINegocio.Migrations
                     b.Property<decimal>("Price")
                         .IsUnicode(false)
                         .HasColumnType("Decimal(18,2)");
+
+                    b.Property<string>("ProductCode")
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)");
 
                     b.Property<string>("ProductName")
                         .IsRequired()
@@ -1023,12 +1049,12 @@ namespace APINegocio.Migrations
 
             modelBuilder.Entity("APINegocio.Aplications.Entities.Stores", b =>
                 {
-                    b.Property<int>("StoresId")
+                    b.Property<int>("StorId")
                         .ValueGeneratedOnAdd()
                         .IsUnicode(false)
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StoresId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StorId"));
 
                     b.Property<string>("AceptPyments")
                         .IsRequired()
@@ -1047,6 +1073,10 @@ namespace APINegocio.Migrations
                         .HasMaxLength(550)
                         .IsUnicode(false)
                         .HasColumnType("varchar(550)");
+
+                    b.Property<string>("CodeStore")
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)");
 
                     b.Property<string>("FacebookAccount")
                         .HasMaxLength(250)
@@ -1100,6 +1130,10 @@ namespace APINegocio.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(250)");
 
+                    b.Property<int>("Stock")
+                        .IsUnicode(true)
+                        .HasColumnType("int");
+
                     b.Property<int>("StoresCount")
                         .IsUnicode(false)
                         .HasColumnType("int");
@@ -1130,7 +1164,7 @@ namespace APINegocio.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(max)");
 
-                    b.HasKey("StoresId");
+                    b.HasKey("StorId");
 
                     b.ToTable("Stores", (string)null);
                 });
@@ -1166,7 +1200,8 @@ namespace APINegocio.Migrations
                     b.Property<int?>("CustomersCustomerId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("DateImprect")
+                    b.Property<DateTime?>("DateImprect")
+                        .IsRequired()
                         .IsUnicode(false)
                         .HasColumnType("datetime2");
 
@@ -1186,7 +1221,8 @@ namespace APINegocio.Migrations
                         .IsUnicode(false)
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("IsDeletedAt")
+                    b.Property<DateTime?>("IsDeletedAt")
+                        .IsRequired()
                         .IsUnicode(false)
                         .HasColumnType("datetime2");
 
@@ -1202,7 +1238,7 @@ namespace APINegocio.Migrations
                         .IsUnicode(false)
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("IsModifiedDate")
+                    b.Property<DateTime?>("IsModifiedDate")
                         .IsUnicode(false)
                         .HasColumnType("datetime2");
 
@@ -1482,7 +1518,7 @@ namespace APINegocio.Migrations
 
                     b.HasOne("APINegocio.Aplications.Entities.Stores", "Stores")
                         .WithMany()
-                        .HasForeignKey("StoresId");
+                        .HasForeignKey("StorId");
 
                     b.Navigation("Proveedores");
 

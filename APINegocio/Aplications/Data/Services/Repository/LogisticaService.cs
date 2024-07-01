@@ -10,272 +10,408 @@ namespace APINegocio.Aplications.Services.Repository
     public class LogisticaService : ILogisticaService
     {
 
-        private readonly APINegociosDbContext _Db;
-        private readonly APINegociosDbContext _APINegociosDb;
+        private readonly APINegociosDbContext _db;
+        //private readonly APINegociosDbContext _APINegociosDb;
         public LogisticaService(APINegociosDbContext dbContext)
         {
-            _Db = dbContext;
+            _db = dbContext;
         }
 
         public void Add<T>(T entity) where T : class
         {
-            _Db.Add(entity);
+            _db.Add(entity);
         }
         public void Remove<T>(T entity) where T : class
         {
-            _Db.Remove(entity);
+            _db.Remove(entity);
+        }
+
+        public bool LoadAll()
+        {
+            try
+            {
+                return _db.SaveChanges() >= 0 ? true : false;
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error!!! No fue posible cargar el registro", ex);
+            }
         }
 
         public async Task<bool> SaveAll()
         {
-            return await _Db.SaveChangesAsync() > 0;
+            return await _db.SaveChangesAsync() > 0;
         }
 
         #region CUSTOMER METHOD
         public async Task<IEnumerable<Customers>> GetCliente()
         {
-            var getCustomer = await _Db.Customers.ToListAsync();
+            var getCustomer = await _db.Customers.ToListAsync();
             return getCustomer;
         }
 
         public async Task<Customers> GetCustomersByIdAsync(int Id)
         {
-            var getCustomerById = await _Db.Customers.FirstOrDefaultAsync(x => x.CustomerId == Id);
+            var getCustomerById = await _db.Customers.FirstOrDefaultAsync(x => x.CustomerId == Id);
             return getCustomerById!;
         }
 
         public async Task<Customers> GetCustomersByNameAsync(string names)
         {
-            var getCustomerByName = await _Db.Customers.FirstOrDefaultAsync(x => x.CustomerName == names);
+            var getCustomerByName = await _db.Customers.FirstOrDefaultAsync(x => x.CustomerName == names);
             return getCustomerByName!;
         }
+
+        public async Task<ICollection<Customers>> GetByCustomersByCodeAsync(string code)
+        {
+            try
+            {
+                if (code != null)
+                {
+                    IQueryable<Customers> query = _db.Set<Customers>();
+                    if (!string.IsNullOrEmpty(code))
+                        query = query.Where(e => e.PostalCode.Contains(code) || e.PostalCode.Contains(code));
+
+                    return await query.AsNoTracking().ToListAsync();
+
+                }
+
+                return new List<Customers>();
+
+                //var _getCustomerByCode = await _Db.Customers.FindAsync(code).;
+                //return _getCustomerByCode;
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error!!! No se encontro ningún cliente asociado a ese código postal", ex);
+            }
+        }
+
+        public bool GetByCustomerIsDeleted(Customers customers)
+        {
+            try
+            {
+                var _getIsDeleted = _db.Customers.Find(customers.CustomerId);
+                if (_getIsDeleted != null)
+                {
+                    _getIsDeleted.IsDeleted = true;
+                    _getIsDeleted.IsStatu = false;
+                    _getIsDeleted.IsDeletedAt = DateTime.Now;
+                    _db.SaveChanges();
+                }
+
+                return LoadAll();
+
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error!!! Algo salió mal al eliminar el registro", ex);
+            }
+        }
+
         #endregion
 
-        #region SHOPPING METHOD
-        public async Task<IEnumerable<Shopping>> GetShoppings()
-        {
-            var getShopping = await _Db.Shoppings.ToListAsync();
-            return getShopping;
-        }
-
-        public async Task<Shopping> GetShoppingByIdAsync(int Id)
-        {
-            var getShoppingById = await _Db.Shoppings.FirstOrDefaultAsync(x => x.ShoppingId == Id);
-            return getShoppingById!;
-        }
-
-        public async Task<Shopping> GetShoppingByNameAsync(string names)
-        {
-            var getShoppingByName = await _Db.Shoppings.FirstOrDefaultAsync(x => x.ShoppingName == names);
-            return getShoppingByName!;
-        }
-
-        public async Task<Shopping> GetShoppingByNumberShopping(Shopping shopping)
-        {
-            var getShoppinByNumber = await _Db.Shoppings.FirstOrDefaultAsync(x => x.NumberShopping == shopping.NumberShopping);
-            return getShoppinByNumber!;
-        }
-
-        public async Task<Shopping> GetShoppingByCodeAsync(Shopping shopping)
-        {
-            var getShoppinCode = await _Db.Shoppings.FirstOrDefaultAsync(x => x.ShoppingCode == shopping.ShoppingCode);
-            return getShoppinCode!;
-        }
-        #endregion
+     
 
         #region ORDERS METHOD
         public async Task<IEnumerable<Orders>> GetOrders()
         {
-            var getOrders = await _Db.Orders.ToListAsync();
-            return getOrders;
+            try
+            {
+                var getOrders = await _db.Orders.ToListAsync();
+                return getOrders;
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...! No fue posible mostrar todas las Ordenes.", ex);
+            }
+
         }
 
         public async Task<Orders> GetOrdersByIdAsync(int Id)
         {
-            var getByIdOrder = await _Db.Orders.FirstOrDefaultAsync(x => x.OrderId == Id);
-            return getByIdOrder!;
+            try
+            {
+                var getByIdOrder = await _db.Orders.FirstOrDefaultAsync(x => x.OrderId == Id);
+                return getByIdOrder!;
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...! No fue posiblie mostrar la Order, por favor validar que el ID sea el correcto.", ex);
+            }
+
         }
 
         public async Task<Orders> GetOrdersByNameAsync(string names)
         {
-            var getNameOrder = await _Db.Orders.FirstOrDefaultAsync(x => x.OrderName == names);
-            return getNameOrder!;
+            try
+            {
+                var getNameOrder = await _db.Orders.FirstOrDefaultAsync(x => x.OrderName == names);
+                return getNameOrder!;
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...! No fue posiblie mostrar la Order, por favor validar que el nombre sea el correcto.", ex);
+            }
+
         }
 
         public async Task<Orders> GetOrdersByCodeAsync(string code)
         {
-            var getCodeOrder = await _Db.Orders.FirstOrDefaultAsync(x => x.OrderCode == code);
-            return getCodeOrder!;
+            try
+            {
+                var getCodeOrder = await _db.Orders.FirstOrDefaultAsync(x => x.OrderCode == code);
+                return getCodeOrder!;
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...! No fue posiblie mostrar la Order, por favor validar que el código sea el correcto.", ex);
+            }
+
+        }
+
+        public bool GetByOrderIsDeleted(Orders orders)
+        {
+            try
+            {
+                var _getIsDeleted = _db.Set<Orders>().Find(orders.OrderId);
+                if (_getIsDeleted != null)
+                {
+                    _getIsDeleted.IsDeleted = true;
+                    _getIsDeleted.IsAsset = false;
+                    _getIsDeleted.IsDeletedAt = DateTime.Now;
+                    _db.SaveChanges();
+
+                }
+
+                return LoadAll();
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...! No fue posiblie eliminar la Order, por favor validar que el ID sea el correcto.", ex);
+            }
         }
         #endregion
 
         #region SENDERS METHOD
         public async Task<IEnumerable<Senders>> GetSenders()
         {
-            var getSenders = await _Db.Senders.ToListAsync();
-            return getSenders;
+            try
+            {
+                var getSenders = await _db.Set<Senders>()
+                    .OrderBy(e => e.SenderName)
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                return getSenders;
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...! Algo salió mal al mostrar todos los remitentes.", ex);
+            }
+
         }
 
         public async Task<Senders> GetSendersByIdAsync(int Id)
         {
-            var getSendersById = await _Db.Senders.FirstOrDefaultAsync(x => x.SenderId == Id);
-            return getSendersById!;
+            try
+            {
+                if (Id > 0)
+                {
+                    var getSendersById = await _db.Senders.FirstOrDefaultAsync(x => x.SenderId == Id);
+                    return getSendersById!;
+
+                }
+                throw new InvalidOperationException("Error...! El ID no fue ingresado.");
+
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...! Algo salió mal al mostrar el remitentes. Por favor validar que el ID sea el correcto. " +
+                    "O que el remitente existe.", ex);
+            }
+
         }
 
         public async Task<Senders> GetSendersByNameAsync(string names)
         {
-            var getSenderName = await _Db.Senders.FirstOrDefaultAsync(x => x.SenderName == names);
-            return getSenderName!;
+            try
+            {
+                if (names != null)
+                {
+                    var getSenderName = await _db.Senders.FirstOrDefaultAsync(x => x.SenderName == names);
+                    return getSenderName!;
+
+                }
+                throw new InvalidOperationException("Error...! El nombre no fue ingresado.");
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...! Algo salió mal al mostrar el remitentes. Por favor validar que el nombre sea el correcto. " +
+                    "O que el remitente existe.", ex);
+            }
+
         }
 
         public async Task<Senders> GetSendersByCodeAsync(string code)
         {
-            var getSenderCode = await _Db.Senders.FirstOrDefaultAsync(x => x.SenderCode == code);
-            return getSenderCode!;
-        }
-        #endregion
+            try
+            {
+                if (code != null)
+                {
 
-        #region TICKER METHOD
-        public async Task<IEnumerable<Tickers>> GetTickers()
-        {
-            var getTicker = await _Db.Tickers.ToListAsync();
-            return getTicker;
+                    var getSenderCode = await _db.Senders.FirstOrDefaultAsync(x => x.SenderCode == code);
+                    return getSenderCode!;
+                }
+                throw new InvalidOperationException("Error...! El código no fue ingresado.");
+            }
+            catch (Exception ex)
+            {
 
-        }
+                throw new Exception("Error...! Algo salió mal al mostrar el remitentes. Por favor validar que el código sea el correcto. " +
+                   "O que el remitente existe.", ex);
+            }
 
-        public async Task<Tickers> GetTickersByIdAsync(int Id)
-        {
-            var getTickerById = await _Db.Tickers.FirstOrDefaultAsync(x => x.TickerId == Id);
-            return getTickerById!;
-        }
-
-        public async Task<Tickers> GetTickersByNameAsync(string names)
-        {
-            var getTickerByName = await _Db.Tickers.FirstOrDefaultAsync(x => x.TickerTitulo == names);
-            return getTickerByName!;
         }
 
-        public async Task<Tickers> GetTickersByCodeAsync(string code)
+        public bool GetSenderByIsDeleted(Senders senders)
         {
-            var getTickerByCode = await _Db.Tickers.FirstOrDefaultAsync(x => x.CodeTicker == code);
-            return getTickerByCode!;
+            try
+            {
+                var _getSenderIsDeleted = _db.Set<Senders>().Find(senders.SenderId);
+                if (_getSenderIsDeleted != null) 
+                {
+                
+                    _getSenderIsDeleted.IsDeleted = true;
+                    _getSenderIsDeleted.IsAsset = false;
+                    _getSenderIsDeleted.IsDeletedAt = DateTime.Now;
+                    _db.SaveChanges();
+                
+                }
+                return LoadAll();
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...! Algo salió mal al eliminar el registro, por favor validar que el ID, sea el correcto.", ex);
+            }
         }
         #endregion
 
         #region PAYMENTS METHOD
         public async Task<IEnumerable<Payments>> GetPayments()
         {
-            var getPayments = await _Db.Payments.ToListAsync();
-            return getPayments;
+            try
+            {
+                return await _db.Set<Payments>().OrderBy(e => e.OrderId).ToListAsync();
+
+                //var getPayments = await _db.Payments.ToListAsync();
+                //return getPayments;
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...! No fue posible mostrar los pagos", ex);
+            }
+
         }
 
         public async Task<Payments> GetPaymentsByIdAsync(int Id)
         {
-            var getByIdPayments = await _Db.Payments.FirstOrDefaultAsync(x => x.PaymentId == Id);
-            return getByIdPayments!;
+            try
+            {
+                if (Id > 0)
+                {
+                    var getByIdPayments = await _db.Payments.FirstOrDefaultAsync(x => x.PaymentId == Id);
+                    return getByIdPayments!;
+                }
+                throw new InvalidOperationException("No fue posible mostrar el pago");
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...! No fue posible el pago", ex);
+            }
+
         }
 
         public async Task<Payments> GetPaymentsByToquenAsync(string toquen)
         {
-            var getByIdToquen = await _Db.Payments.FirstOrDefaultAsync(x => x.Toquen == toquen);
-            return getByIdToquen!;
+            try
+            {
+                if (toquen != null)
+                {
+                    var getByIdToquen = await _db.Payments.FirstOrDefaultAsync(x => x.Toquen == toquen);
+                    return getByIdToquen!;
+
+                }
+                throw new InvalidOperationException("No fue posible a mostrar el pago por el toquen");
+
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...! No fue posible mostrar el pago", ex);
+            }
+
         }
+        public async Task<Payments> GetPaymentsByCodeAsync(string code)
+        {
+            try
+            {
+                if (code != null)
+                {
+                    var _get = await _db.Set<Payments>().OrderBy(e => e.PaymentCode).FirstOrDefaultAsync(e => e.PaymentCode == code);
+                    return _get;
+
+                }
+                throw new InvalidOperationException("Error...! No sé encontro ningún pago");
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...! No fue posible mostrar el pago, por favor validar que el código, sea el correcto", ex);
+            }
+        }
+
+        public bool GetByPaymentIsDeleted(Payments payments)
+        {
+            try
+            {
+                var _get = _db.Set<Payments>().Find(payments.PaymentId);
+                if (_get != null)
+                {
+                    _get.IsDeleted = true;
+                    _get.IsDeletedAt = DateTime.Now;
+                    _get.IsUpdatedAt = null;
+                    _get.IsStatud = false;
+                    _get.IsRefund = false;
+                    _db.SaveChanges();
+
+                }
+
+                return LoadAll();
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...! No fue posible eliminar el pago.", ex);
+            }
+        }
+
+
         #endregion
 
-        #region INVENTORY METHOD
-        public async Task<IEnumerable<Inventory>> GetInventoryAsync()
-        {
-            try
-            {
-                var getInventory = (from inv in _APINegociosDb.Inventory
-                                    select inv).ToListAsync();
-
-                return await getInventory;
-            }
-            catch (WebException ex)
-            {
-
-                throw ex.InnerException;
-            }
-
-        }
-
-        public async Task<IEnumerable<Inventory>> GetByIdInventory(int Id)
-        {
-            try
-            {
-                var getById = (from getId in _APINegociosDb.Inventory
-                               where getId.InventoryId == Id
-                               select getId).ToListAsync();
-
-                return await getById;
-            }
-            catch (WebException ex)
-            {
-
-                throw ex.InnerException;
-            }
-
-        }
-
-        public async Task<IEnumerable<Inventory>> GetByCodeInventory(string code)
-        {
-            try
-            {
-                var getCode = _APINegociosDb.Inventory.Where(c => c.CodigoInventory.Any(char.IsLetterOrDigit) &&
-                c.CodigoInventory.Contains(code)).ToListAsync();
-
-                return await getCode;
-            }
-            catch (WebException ex)
-            {
-
-                throw ex.GetBaseException();
-            }
-
-        }
-
-        public async Task<IEnumerable<Inventory>> GetByNameInventory(string name)
-        {
-            try
-            {
-                var getByName = _APINegociosDb.Set<Inventory>().Where(e => e.InventoryName.Any(char.IsLetterOrDigit)
-                && e.InventoryName.Contains(name)).ToListAsync();
-
-                return await getByName;
-
-                //var getByName = (from getName in _APINegociosDb.Inventory
-                //                 where getName.InventoryName == name
-                //                 select getName).ToListAsync();
-
-                //return await getByName;
-            }
-            catch (WebException ex)
-            {
-
-                throw ex.GetBaseException();
-            }
-        }
-        public async Task<IEnumerable<Inventory>> GetByNumberInventories(int number)
-        {
-            try
-            {
-                // var getByNumber = _APINegociosDb.Set<Inventory>().Where(e => e.NumberInventory.Any(char.IsLetterOrDigit)
-                //&& e.NumberInventory.Contains(number))
-
-                var getNumber = (from num in _APINegociosDb.Inventory
-                                 where num.NumberInventory == number
-                                 select num).ToListAsync();
-
-                return await getNumber;
-            }
-            catch (WebException ex)
-            {
-
-                throw ex.InnerException;
-            }
-
-        }
-        #endregion
     }
 }

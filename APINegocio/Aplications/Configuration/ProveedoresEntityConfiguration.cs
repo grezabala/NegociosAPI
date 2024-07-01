@@ -21,28 +21,31 @@ namespace APINegocio.Aplications.Configuration
                 .IsRequired();
 
             builder.Property(x => x.CreadProveedor)
-                 .IsUnicode(false)
-                .IsRequired();
+                 .IsUnicode(false);
+                //.IsRequired();
 
             builder.Property(x => x.IsAsset)
                 .IsUnicode(false)
                 .IsRequired();
 
             builder.Property(x => x.IsDateModified)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+                //.IsRequired();
 
             builder.Property(x => x.IsDeleted)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+               // .IsRequired();
 
             builder.Property(x => x.IsDeletedAt)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+            //.IsRequired();
 
             builder.Property(x => x.IsModified)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+            //.IsRequired();
+
+            builder.Property(x => x.IsDateModified)
+                .IsUnicode(false);
 
             builder.Property(x => x.ProveedorCode)
                 .IsUnicode(false)
@@ -55,7 +58,7 @@ namespace APINegocio.Aplications.Configuration
                 .IsRequired();
               
             builder.Property(x => x.ProveedorReference)
-               .IsUnicode(false)
+                .IsUnicode(false)
                 .HasMaxLength(550)
                 .IsRequired();
 
@@ -65,10 +68,11 @@ namespace APINegocio.Aplications.Configuration
                 .IsRequired();
 
             builder.Property(x => x.ProveedorName)
-               .IsUnicode(false)
+                .IsUnicode(false)
                 .HasMaxLength(550)
                 .IsRequired();
 
+            builder.HasQueryFilter(x => !x.IsDeleted);
         }
     }
 }

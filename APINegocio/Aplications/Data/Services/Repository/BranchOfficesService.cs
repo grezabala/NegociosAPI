@@ -19,6 +19,10 @@ namespace APINegocio.Aplications.Data.Services.Repository
         {
             try
             {
+                creadBranchs.IsCreadAt = DateTime.Now;
+                creadBranchs.IsCreadBy = true;
+                creadBranchs.IsStatud = true;
+
                 _db.Add(creadBranchs);
                 return IsSaveAll();
             }
@@ -33,9 +37,19 @@ namespace APINegocio.Aplications.Data.Services.Repository
         {
             try
             {
-                _db.Set<BranchOffices>().Remove(branchs);
-                if (branchs == null)
-                    throw new ArgumentNullException("Error! No se ingreso el ID");
+                var _getDeleted = _db.Set<BranchOffices>().Find(branchs.BranchId);
+                if (_getDeleted != null)
+                {
+                    _getDeleted.IsDeletedBy = true;
+                    _getDeleted.IsStatud = false;
+                    _getDeleted.IsDeletedAt = DateTime.Now;
+                    _db.SaveChanges();
+
+                }
+
+                //_db.Set<BranchOffices>().Remove(branchs);
+                //if (branchs == null)
+                //    throw new ArgumentNullException("Error! No se ingreso el ID");
 
                 return IsSaveAll();
             }
@@ -104,7 +118,32 @@ namespace APINegocio.Aplications.Data.Services.Repository
         {
             try
             {
-                _db.Update(updatedBranchs);
+                //_db.Update(updatedBranchs);
+
+                var _updatedBranchOffice = GetByBranchOfficeId(updatedBranchs.BranchId) ?? throw new ArgumentNullException("Error! El Id ingresado no esta registrado a ninguna Sucursal");
+
+                _updatedBranchOffice.BranchId = updatedBranchs.BranchId;
+                _updatedBranchOffice.BranchOfficesName = updatedBranchs.BranchOfficesName;
+                _updatedBranchOffice.Direccion = updatedBranchs.Direccion;
+                _updatedBranchOffice.BranchOfficesCode = updatedBranchs.BranchOfficesCode;
+                _updatedBranchOffice.Direccion = _updatedBranchOffice.Direccion;
+                _updatedBranchOffice.Contacts = updatedBranchs.Contacts;
+                _updatedBranchOffice.Referencia = updatedBranchs.Referencia;
+                _updatedBranchOffice.WebSite = updatedBranchs.WebSite;
+                _updatedBranchOffice.FacebookAccount = updatedBranchs.FacebookAccount;
+                _updatedBranchOffice.InstagramAccount = updatedBranchs.InstagramAccount;
+                _updatedBranchOffice.WhatsAppNumber = updatedBranchs.WhatsAppNumber;
+                _updatedBranchOffice.PhoneNumber = updatedBranchs.PhoneNumber;
+                _updatedBranchOffice.OtherNumber = updatedBranchs.OtherNumber;
+                _updatedBranchOffice.Latitud = updatedBranchs.Latitud;
+                _updatedBranchOffice.Longitud = updatedBranchs.Longitud;
+                _updatedBranchOffice.IsStatud = updatedBranchs.IsStatud;
+                updatedBranchs.IsUpdatedAt = DateTime.Now;
+                updatedBranchs.IsUpdatedBy = true;
+                updatedBranchs.IsDeletedAt = null;
+                updatedBranchs.IsDeletedBy = false;
+
+                _db.Entry(_updatedBranchOffice).State = EntityState.Modified;
                 return IsSaveAll();
             }
             catch (Exception ex)
@@ -114,7 +153,7 @@ namespace APINegocio.Aplications.Data.Services.Repository
             }
         }
 
-        public ICollection<BranchOffices> List()
+        public ICollection<BranchOffices> GetBranchOffices()
         {
             try
             {
@@ -130,7 +169,7 @@ namespace APINegocio.Aplications.Data.Services.Repository
             }
         }
 
-        public ICollection<BranchOffices> ListByCode(string code)
+        public ICollection<BranchOffices> GetByBranchOfficeCode(string code)
         {
             try
             {
@@ -141,9 +180,9 @@ namespace APINegocio.Aplications.Data.Services.Repository
 
                 return query.AsNoTracking()
                             .ToList();
-                    
-                    
-                    //_db.Set<BranchOffices>().FirstOrDefault(e => e.BranchOfficesCode == code);
+
+
+                //_db.Set<BranchOffices>().FirstOrDefault(e => e.BranchOfficesCode == code);
             }
             catch (Exception ex)
             {
@@ -152,7 +191,7 @@ namespace APINegocio.Aplications.Data.Services.Repository
             }
         }
 
-        public BranchOffices ListById(int Id)
+        public BranchOffices GetByBranchOfficeId(int Id)
         {
             try
             {
@@ -165,7 +204,7 @@ namespace APINegocio.Aplications.Data.Services.Repository
             }
         }
 
-        public ICollection<BranchOffices> ListByName(string name)
+        public ICollection<BranchOffices> GetByBranchOfficeName(string name)
         {
             try
             {
@@ -174,16 +213,32 @@ namespace APINegocio.Aplications.Data.Services.Repository
                 if (!string.IsNullOrEmpty(name))
                     query = query.Where(e => e.BranchOfficesName.Contains(name) || e.Description.Contains(name));
 
-                return  query.AsNoTracking()
+                return query.AsNoTracking()
                              .ToList();
-                    
-                    
-                    //_db.Set<BranchOffices>().FirstOrDefault(e => e.BranchOfficesName.ToLower().Trim() == name.ToLower().Trim());
+
+
+                //_db.Set<BranchOffices>().FirstOrDefault(e => e.BranchOfficesName.ToLower().Trim() == name.ToLower().Trim());
             }
             catch (Exception ex)
             {
 
                 throw new Exception("Error!", ex);
+            }
+        }
+
+        public ICollection<BranchOffices> GetByBranchOfficeIsDeleted(/*string branchDeleted*/)
+        {
+            try
+            {
+                return _db.Set<BranchOffices>()
+                     .Where(e => !e.IsDeletedBy)
+                     .OrderBy(e => e.BranchId)
+                     .ToList();
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error! No fue posible recuperar los registro eliminado, por favor validar que el registro fue eliminado", ex);
             }
         }
     }

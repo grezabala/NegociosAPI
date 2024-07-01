@@ -18,18 +18,19 @@
         public bool IsUpdated { get; set; }
         public DateTime IsUpdatedAt { get; set; }
         public bool IsStatud { get; set; }
+        public string PaymentCode { get; set; }
 
-        public PaymentsPUTDto()
-        {
-            Fecha = DateTime.Now;
-            IsCreadtPayment = DateTime.Now;
-            IsCreadtRefund = true;
-            IsRefund = true;
-            IsDeleted = false;
-            IsDeletedAt = null;
-            IsStatud = true;
-            IsUpdatedAt = DateTime.Now;
-            IsUpdated = true;
-        }
+        //public PaymentsPUTDto()
+        //{
+        //    Fecha = DateTime.Now;
+        //    IsCreadtPayment = DateTime.Now;
+        //    IsCreadtRefund = true;
+        //    IsRefund = true;
+        //    IsDeleted = false;
+        //    IsDeletedAt = null;
+        //    IsStatud = true;
+        //    IsUpdatedAt = DateTime.Now;
+        //    IsUpdated = true;
+        //}
     }
 }

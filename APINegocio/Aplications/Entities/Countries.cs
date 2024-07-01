@@ -6,6 +6,7 @@
         public string CountryName { get; set; }
         public int StorId { get; set; }
         public int ProveedorId { get; set; }
+        public string CodeCountries { get; set; } //Agregado 26/06/24
         public string Note { get; set; }
         public bool? IsRecurring { get; set; }
         public DateTime WhenDate { get; set; }

@@ -7,7 +7,9 @@
         public string Description { get; set; }
         public decimal Price { get; set; }
         public string Referencia { get; set; }
-        public DateTime IsDateModified { get; set; }
+
+        public string ProductCode { get; set; }
+        public DateTime? IsDateModified { get; set; }
         public bool IsModified { get; set; }
 
         public ProductoPUTDto()

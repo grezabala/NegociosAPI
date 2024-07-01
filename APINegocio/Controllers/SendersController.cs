@@ -5,21 +5,22 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 
 namespace APINegocio.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class SendersController : ControllerBase
     {
-        private readonly ILogisticaService _LogisticaService;
-        private readonly IMapper _Mapper;
+        private readonly ILogisticaService _logisticaService;
+        private readonly IMapper _mapper;
 
         public SendersController(ILogisticaService logisticaService, IMapper mapper)
         {
-            _LogisticaService = logisticaService;
-            _Mapper = mapper;
+            _logisticaService = logisticaService;
+            _mapper = mapper;
         }
 
         [HttpDelete("Id/{Id}")]
@@ -28,17 +29,27 @@ namespace APINegocio.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> Delete(int Id) 
+        public async Task<IActionResult> Delete(int Id)
         {
-          var deleted = await _LogisticaService.GetSendersByIdAsync(Id);
-            if (deleted == null)
-                return NotFound("ERROR!... EL REMITENTE QUE DESEA ELIMINAR NO FUE ENCONTRADO");
+            try
+            {
+                var deleted = await _logisticaService.GetSendersByIdAsync(Id);
 
-            _LogisticaService.Remove(deleted);
-            if (!await _LogisticaService.SaveAll())
-                return BadRequest("ERROR!... NO SE PUEDE ELIMINAR EL REMINTENTE");
+                if (!_logisticaService.GetSenderByIsDeleted(deleted))
+                {
+                    ModelState.AddModelError("", $"Error....! No fue posible eliminar el registro... {deleted}");
+                    return StatusCode(500, ModelState);
 
-            return Ok("EL REMITENTE FUE ELIMINADO");
+                }
+
+                return Ok("EL REMITENTE FUE ELIMINADO");
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error....!", ex);
+            }
+
         }
 
         [AllowAnonymous]
@@ -46,44 +57,110 @@ namespace APINegocio.API.Controllers
         [ResponseCache(CacheProfileName = "Default30Seg")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetSenders() 
+        public async Task<IActionResult> GetSenders()
         {
-            var get = await _LogisticaService.GetSenders();
-            if (get == null)
-                return BadRequest("LOS REMITENTE QUE DESEA VER NO SE ENCUENTRAN DISPONIBLE");
 
-            return Ok(get);
-        
+            try
+            {
+                var _getSenders = await _logisticaService.GetSenders();
+                var _getSendersDto = new List<SendersDto>();
+
+                foreach (var senders in _getSenders)
+                {
+
+                    _getSendersDto.Add(_mapper.Map<SendersDto>(senders));
+
+                }
+
+                return Ok(_getSendersDto);
+
+                //if (get == null)
+                //    return BadRequest("LOS REMITENTE QUE DESEA VER NO SE ENCUENTRAN DISPONIBLE");
+
+                //return Ok(get);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...!", ex);
+            }
+
         }
 
         [AllowAnonymous]
-        [HttpGet("Id")]
+        [HttpGet("{Id:int}")]
         [ResponseCache(CacheProfileName = "Default30Seg")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetById(int Id) 
+        public async Task<IActionResult> GetSenderById(int Id)
         {
-            var getById = await _LogisticaService.GetSendersByIdAsync(Id);
-            if (getById == null)
-                return NotFound("EL ID DEL REMITENTE QUE BUSCA, NO EXISTE");
+            try
+            {
+                var _getById = await _logisticaService.GetSendersByIdAsync(Id);
 
-            return Ok(getById);
-        
+                if (_getById != null)
+                {
+                    var _getByIdDto = new SendersDto()
+                    {
+                        SenderCode = _getById.SenderCode,
+                        SenderName = _getById.SenderName,
+                        SenderDirection = _getById.SenderDirection,
+                        SenderEmail = _getById.SenderEmail,
+                        SenderPhone = _getById.SenderPhone,
+                        SenderId = _getById.SenderId,
+                        SenderPostalCode = _getById.SenderPostalCode,
+                        IsCreadSender = _getById.IsCreadSender,
+                        IsAsset = _getById.IsAsset,
+
+                        //OTRA MANERA DE UTILIZAR MAPPER... DE ESTA MANERA SOLO PUESDO MOSTRAR LO CAMPO QUE DESEO MAPPEAR
+                    };
+
+                    if (_getByIdDto == null)
+                        return NotFound("EL ID DEL REMITENTE QUE BUSCA, NO EXISTE");
+
+                    return Ok(_getByIdDto);
+                }
+
+                return NotFound("No se encontro el registro solicitado....");
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...!", ex);
+            }
+
         }
 
         [AllowAnonymous]
-        [HttpGet("name/{name}")]
+        [HttpGet("~/GetSenderByName")]
         [ResponseCache(CacheProfileName = "Default30Seg")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetName(Senders model) 
+        public async Task<IActionResult> GetSenderByName(string nombre)
         {
-            var getName = await _LogisticaService.GetSendersByNameAsync(model.SenderName!);
-            return Ok(getName);
+
+            try
+            {
+                var getName = await _logisticaService.GetSendersByNameAsync(nombre);
+
+                var getNameDto = _mapper.Map<SendersDto>(getName);
+                if (getNameDto == null)
+                {
+                    return NoContent();
+
+                }
+
+                return Ok(getNameDto);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...!", ex);
+            }
 
         }
 
@@ -93,50 +170,104 @@ namespace APINegocio.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> Post([FromBody] SendersPOSTDto modelDto) 
+        public async Task<IActionResult> Post([FromBody] SendersPOSTDto modelDto)
         {
-            var post = _Mapper.Map<Senders>(modelDto);
-            _LogisticaService.Add(post);
+            try
+            {
+                var post = _mapper.Map<Senders>(modelDto);
 
-            if(await _LogisticaService.SaveAll())
-                return Ok(post);
-            return BadRequest("REMITENTE REGISTRADO CORRECTAMENTE");
-        
+                post.IsAsset = true;
+                post.IsCreadSender = DateTime.Now;
+                post.IsDeleted = false;
+                post.IsDeletedAt = null;
+                post.IsModifiedPostalCode = false;
+                post.IsModifiedSender = false;
+                post.IsDeletedAt = null;
+                post.IsModifiedSenderDate = null;
+
+                _logisticaService.Add(post);
+
+                if (await _logisticaService.SaveAll())
+                    return Ok(post);
+
+
+                return BadRequest("REMITENTE REGISTRADO CORRECTAMENTE");
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...!", ex);
+            }
+
         }
 
         [AllowAnonymous]
-        [HttpGet("code/{code}")]
+        [HttpGet("~/GetSenderByCode")]
         [ResponseCache(CacheProfileName = "Default30Seg")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Get(Senders model) 
+        public async Task<IActionResult> GetSenderByCode(string code)
         {
-            var getCode = await _LogisticaService.GetSendersByCodeAsync(model.SenderCode!);
-            return Ok(getCode);
+            try
+            {
+                var getCode = await _logisticaService.GetSendersByCodeAsync(code);
+                var _getCodeDto = _mapper.Map<SendersDto>(getCode);
+                if (_getCodeDto == null)
+                {
+                    return NoContent();
+                }
+
+                return Ok(_getCodeDto);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...!", ex);
+            }
+
+
         }
 
-        [HttpPut("Id/{Id}")]
+        [HttpPut("{Id:int}")]
         [ProducesResponseType(201, Type = typeof(BranchOfficesPUTDto))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> Put(int Id, [FromBody] SendersPUTDto modelDto) 
+        public async Task<IActionResult> Put(int Id, [FromBody] SendersPUTDto modelDto)
         {
-          if(Id != modelDto.SenderId)
-                return BadRequest("ERROR!... EL ID QUE ACABA DE INGRESAR NO COINCIDEN CON NINGUN REMITENTE");
 
-          var get = await _LogisticaService.GetSendersByIdAsync(modelDto.SenderId!);
-            if (get == null)
-                return BadRequest();
+            try
+            {
+                if (Id != modelDto.SenderId)
+                    return BadRequest("ERROR!... EL ID QUE ACABA DE INGRESAR NO COINCIDEN CON NINGUN REMITENTE");
 
-            _Mapper.Map(modelDto, get);
+                var get = await _logisticaService.GetSendersByIdAsync(modelDto.SenderId!);
+                if (get == null)
+                    return BadRequest();
+                _mapper.Map(modelDto, get);
 
-            if (!await _LogisticaService.SaveAll()) 
-                return NoContent();
+                get.IsAsset = true;
+                get.IsCreadSender = null;
+                get.IsDeleted = false;
+                get.IsDeletedAt = null;
+                get.IsModifiedPostalCode = true;
+                get.IsModifiedSender = true;
+                get.IsDeletedAt = null;
+                get.IsModifiedSenderDate = DateTime.Now;
 
-            return Ok();
+                if (!await _logisticaService.SaveAll())
+                    return NoContent();
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...!", ex);
+            }
+
         }
     }
 }

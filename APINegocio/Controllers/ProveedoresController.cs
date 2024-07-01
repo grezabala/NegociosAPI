@@ -13,32 +13,41 @@ namespace APINegocio.API.Controllers
     [Authorize]
     public class ProveedoresController : ControllerBase
     {
-        private readonly IRepositoryService _Repo;
-        private readonly IMapper Mapper;
+        private readonly IRepositoryService _repo;
+        private readonly IMapper _mapper;
 
         public ProveedoresController(IRepositoryService repositoryService, IMapper mapper)
         {
-            _Repo = repositoryService;
-            Mapper = mapper;
+            _repo = repositoryService;
+            _mapper = mapper;
         }
 
-        [HttpDelete("Id/{Id}")]
+        [HttpDelete("{Id:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int Id)
         {
-            var deletedProveedores = await _Repo.GetProveedoresByIdAsync(id);
-            if (deletedProveedores == null)
-                return NotFound("ERROR!... EL PROVEEDOR QUE DESEA ELIMINAR NO FUE ENCONTRADO");
+            try
+            {
+                var deletedProveedores = await _repo.GetProveedoresByIdAsync(Id);
 
-            _Repo.Delete(deletedProveedores);
-            if (!await _Repo.SaveAll())
-                BadRequest("ERROR!... NO SE PUDO ELIMINAR EL PROVEEDOR");
+                if (!_repo.GetProveedorByIsDeleted(deletedProveedores))
+                {
+                    ModelState.AddModelError("", $"Algo salió mal al eliminar el proveedor... {deletedProveedores}");
+                    return StatusCode(500, ModelState);
+                }
 
-            return Ok(deletedProveedores);
+                return Ok(deletedProveedores);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...! ", ex);
+            }
+
         }
 
         [AllowAnonymous]
@@ -46,42 +55,112 @@ namespace APINegocio.API.Controllers
         [ResponseCache(CacheProfileName = "Default30Seg")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetProveedores()
         {
-            var getProveedores = await _Repo.GetProveedores();
-            return Ok(getProveedores);
+            try
+            {
+                var _getProveedores = await _repo.GetProveedores();
+                var _getProveedoresDto = new List<ProveedoresDto>();
+
+                foreach (var proveee in _getProveedores)
+                {
+                    _getProveedoresDto.Add(_mapper.Map<ProveedoresDto>(proveee));
+                }
+
+                return Ok(_getProveedoresDto);
+
+                //var getProveedores = await _repo.GetProveedores();
+                //           return Ok(getProveedores);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error....!", ex);
+            }
+
         }
 
         [AllowAnonymous]
-        [HttpGet("Id")]
+        [HttpGet("{Id:int}")]
         [ResponseCache(CacheProfileName = "Default30Seg")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Get(int Id)
+        public async Task<IActionResult> GetProveedorById(int Id)
         {
-            var getProveedorById = await _Repo.GetProveedoresByIdAsync(Id);
-            if (getProveedorById == null)
-                return NotFound("ERROR!... EL PROVEEDOR NO FUE ENCONTRADO");
+            try
+            {
+                var getProveedorById = await _repo.GetProveedoresByIdAsync(Id);
 
-            return Ok(getProveedorById);
+                var _getProveedorByIdDto = _mapper.Map<ProveedoresDto>(getProveedorById);
+
+                if (_getProveedorByIdDto == null)
+                    return NotFound("ERROR!... EL PROVEEDOR NO FUE ENCONTRADO");
+
+                return Ok(_getProveedorByIdDto);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...!", ex);
+            }
+
         }
 
         [AllowAnonymous]
-        [HttpGet("name/{name}")]
+        [HttpGet("~/GetProveedorByName")]
         [ResponseCache(CacheProfileName = "Default30Seg")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Get(string names)
+        public async Task<IActionResult> GetProveedorByName(string names)
         {
-            var getNameProveedor = await _Repo.GetProveedoresByNameAsync(names);
-            if (getNameProveedor == null)
-                return NotFound("ERROR!... EL PROVEEDOR NO FUE ENCONTRADO");
+            try
+            {
+                var getNameProveedor = await _repo.GetProveedoresByNameAsync(names);
 
-            return Ok(getNameProveedor);
+                var _getNameProveedorDto = _mapper.Map<ProveedoresDto>(getNameProveedor);
+                if (_getNameProveedorDto == null)
+                    return NotFound("ERROR!... EL PROVEEDOR NO FUE ENCONTRADO");
+
+                return Ok(_getNameProveedorDto);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error....!", ex);
+            }
+
+        }
+
+        [AllowAnonymous]
+        [HttpGet("~/GetProveedorByCode")]
+        [ResponseCache(CacheProfileName = "Default30Seg")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetProveedorByCode(string code)
+        {
+            try
+            {
+                var getCode = await _repo.GetByProveedorCodeAsync(code);
+
+                var _getCodeDto = _mapper.Map<ProveedoresDto>(getCode);
+
+                if (_getCodeDto == null)
+                    return NotFound("ERROR!... EL PROVEEDOR NO FUE ENCONTRADO");
+
+                return Ok(_getCodeDto);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...!", ex);
+            }
+
         }
 
         [HttpPost]
@@ -92,34 +171,67 @@ namespace APINegocio.API.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Post(ProveedoresPOSTDto modelDto)
         {
-            var addProveedor = Mapper.Map<Proveedores>(modelDto);
-            _Repo.Add(addProveedor);
+            try
+            {
+                var addProveedor = _mapper.Map<Proveedores>(modelDto);
 
-            if (await _Repo.SaveAll())
-                return Ok(addProveedor);
+                addProveedor.IsDeleted = false;
+                addProveedor.IsDeletedAt = null;
+                addProveedor.IsModified = false;
+                addProveedor.IsDateModified = null;
+                addProveedor.CreadProveedor = DateTime.Now;
+                addProveedor.IsAsset = true;
 
-            return BadRequest();
+                _repo.Add(addProveedor);
+
+                if (await _repo.SaveAll())
+                    return Ok(addProveedor);
+
+                return BadRequest();
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...! Algo salió mal al agregar el nuevo proveedor.", ex);
+            }
+
         }
 
-        [HttpPut("Id/{Id}")]
+        [HttpPut("{Id:int}")]
         [ProducesResponseType(201, Type = typeof(ProveedoresPUTDto))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> Put(int Id, ProveedoresPUTDto modelDto) 
+        public async Task<IActionResult> Put(int Id, ProveedoresPUTDto modelDto)
         {
-          if(Id != modelDto.ProveedorId)
-                 return BadRequest("ERROR!... EL ID QUE ACABA DE INGRESAR NO COINCIDEN CON NINGUN PROVEEDPOR");
+            try
+            {
+                if (Id != modelDto.ProveedorId)
+                    return BadRequest("ERROR!... EL ID QUE ACABA DE INGRESAR NO COINCIDEN CON NINGUN PROVEEDPOR");
 
-            var updatedProveedor = await _Repo.GetProveedoresByIdAsync(modelDto.ProveedorId);
-            if (updatedProveedor == null) return BadRequest();
+                var updatedProveedor = await _repo.GetProveedoresByIdAsync(modelDto.ProveedorId);
+                if (updatedProveedor == null) return BadRequest();
 
-            Mapper.Map(modelDto, updatedProveedor);
+                _mapper.Map(modelDto, updatedProveedor);
 
-            if (!await _Repo.SaveAll()) return BadRequest();
+                updatedProveedor.IsDeleted = false;
+                updatedProveedor.IsDeletedAt = null;
+                updatedProveedor.IsModified = true;
+                updatedProveedor.IsDateModified = DateTime.Now;
+                updatedProveedor.CreadProveedor = null;
+                updatedProveedor.IsAsset = true;
 
-            return Ok(updatedProveedor);
-                
+                if (!await _repo.SaveAll()) return BadRequest();
+
+                return Ok(updatedProveedor);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...! Algo salió mal al editar el registro.", ex);
+            }
+
+
         }
     }
 }

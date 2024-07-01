@@ -10,7 +10,7 @@ namespace APINegocio.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class StoresController : ControllerBase
     {
         private readonly ILocationService _LocationService;
@@ -79,7 +79,7 @@ namespace APINegocio.Controllers
             if (getByIdStor == null)
                 return NotFound("ERROR!" + "LA TIENDA NO FUE ENCONTRADA O YA NO EXISTE");
 
-            _LocationService.Remove(getByIdStor);
+            _LocationService.GetByStoreIsDeleted(getByIdStor);
             if (!await _LocationService.SaveAll())
                 return BadRequest("ERROR!" + "NO ES POSIBLE ELIMINAR ESTA TIENDA");
 

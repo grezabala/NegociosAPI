@@ -12,7 +12,7 @@ namespace APINegocio.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-   
+
     public class CityController : ControllerBase
     {
         private readonly ILocationService _LocationService;
@@ -25,7 +25,7 @@ namespace APINegocio.Controllers
         }
 
         // GET: api/<CityController>
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpGet]
         [ResponseCache(CacheProfileName = "Default30Seg")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -40,29 +40,31 @@ namespace APINegocio.Controllers
         }
 
         // GET api/<CityController>/5
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpGet("Id")]
         [ResponseCache(CacheProfileName = "Default30Seg")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        //[ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Get(int Id)
         {
             var getByIdCity = await _LocationService.GetByIdCityAsync(Id);
             if (getByIdCity == null)
-                return NotFound("ERROR!... EL ID DEL LA CIUDAD NO EXISTE");
+                return NotFound("ERROR!... NO SE ENCONTRO NINGUNA CIUDAD CON EL ID SUMINISTRADO, POR FAVOR VERIFICAR QUE EL ID ES CORRECTO");
 
             return Ok(getByIdCity);
         }
 
         // GET api/<CityController>/5
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpGet("name/{name}")]
         [ResponseCache(CacheProfileName = "Default30Seg")]
-        public async Task<IActionResult> Get(City name)
+        //[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> Get(string name)
         {
-            var getByNameCity = await _LocationService.GetByNameCityAsync(name.CityName);
+            var getByNameCity = await _LocationService.GetByNameCityAsync(name);
             if (getByNameCity == null)
                 return NotFound("ERROR!... EL ID DEL LA CIUDAD NO EXISTE");
 
@@ -70,6 +72,7 @@ namespace APINegocio.Controllers
         }
 
         // POST api/<CityController>
+        [Authorize]
         [HttpPost]
         [ProducesResponseType(201, Type = typeof(CityPOSTDto))]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -78,24 +81,49 @@ namespace APINegocio.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Post([FromBody] CityPOSTDto modelDto)
         {
-            var addCity = Mapper.Map<City>(modelDto);
-            _LocationService.Add(addCity);
 
-            if (await _LocationService.SaveAll())
-                return Ok(addCity);
-            return BadRequest();
+            try
+            {
+                modelDto.IsDeleted = false;
+                modelDto.IsDeletedAt = null;
+                modelDto.IsUpdated = false;
+                modelDto.IsDeletedAt = null;
+
+                var addCity = Mapper.Map<City>(modelDto);
+
+                _LocationService.Add(addCity);
+
+                if (await _LocationService.SaveAll())
+                    return Ok(addCity);
+
+                return BadRequest();
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error! Algo salió mal al registrar la nueva Ciudad", ex);
+            }
+            
         }
 
         // PUT api/<CityController>/5
+        //[Authorize]
         [HttpPut("{Id}")]
         [ProducesResponseType(201, Type = typeof(CityPUTDto))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+
         public async Task<IActionResult> Put(int Id, [FromBody] CityPUTDto modelDto)
         {
             if (Id != modelDto.CityId)
                 return BadRequest("ERROR!... EL ID QUE ACABA DE INGRESAR NO COINCIDE CON NINGUNA CIUDAD");
+
+            modelDto.IsDeleted = false;
+            modelDto.IsDeletedAt = null;
+            modelDto.IsUpdated = true;
+            modelDto.IsDeletedAt = null;
+            modelDto.IsUpdateAt = DateTime.Now;
 
             var updateCity = await _LocationService.GetByIdCityAsync((int)modelDto.CityId);
 
@@ -104,30 +132,48 @@ namespace APINegocio.Controllers
 
             Mapper.Map(modelDto, updateCity);
 
-            if (!await _LocationService.SaveAll())
+            if (await _LocationService.SaveAll())
                 return NoContent();
 
             return Ok(updateCity);
         }
 
         // DELETE api/<CityController>/5
-        [HttpDelete("Id/{Id}")]
+        //[Authorize]
+        [HttpDelete("Id/{Id:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> Delete(int Id)
+        public async Task<IActionResult> Deleted(int Id)
         {
-            var deletedCity = await _LocationService.GetByIdCityAsync(Id);
-            if (deletedCity == null)
-                return NotFound("ERROR!... EL ID DE LA CIUDAD QUE NO FUE ENCONTRADO");
+            try
+            {
+                var deletedCity = await _LocationService.GetByIdCityAsync(Id);
+                if (deletedCity == null)
+                    return NotFound("ERROR!... EL ID DE LA CIUDAD QUE NO FUE ENCONTRADO");
 
-            _LocationService.Remove(deletedCity);
-            if (!await _LocationService.SaveAll())
-                return BadRequest("EROOR!... NO FUE POSIBLE ELIMINAR ESTA CIUDAD");
+                if (!_LocationService.GetByCityIsDeleted(deletedCity)) 
+                {
+                    ModelState.AddModelError("", "Error!!! No fue posible eliminar la Ciudad");
+                    return StatusCode(500, ModelState);
+                }
 
-            return Ok("ESTA CIUDAD FUE ELIMINADA");
+                return NoContent();
+
+                //_LocationService.GetByCityIsDeleted(deletedCity);
+                //if (!await _LocationService.SaveAll())
+                    //return BadRequest("EROOR!... NO FUE POSIBLE ELIMINAR ESTA CIUDAD");
+
+                //return Ok("ESTA CIUDAD FUE ELIMINADA");
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error! No fue posible eliminar la Ciudad", ex);
+            }
+
         }
     }
 }
