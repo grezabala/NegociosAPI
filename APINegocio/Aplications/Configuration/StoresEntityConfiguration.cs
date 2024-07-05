@@ -16,6 +16,7 @@ namespace APINegocio.Aplications.Configuration
             base.Configure(builder);
 
             builder.HasKey(x => x.StorId);
+
             builder.Property(x => x.StorId)
                 .IsUnicode(false)
                 .IsRequired();
@@ -61,14 +62,14 @@ namespace APINegocio.Aplications.Configuration
                 .IsRequired();
 
             builder.Property(x => x.IsDeleted)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+                //.IsRequired();
 
-            builder.HasQueryFilter(x => x.IsDeleted);
+            builder.HasQueryFilter(x => !x.IsDeleted);
 
             builder.Property(x => x.IsModified)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+                //.IsRequired();
 
             builder.Property(x => x.Latitud)
                 .IsUnicode(false)
@@ -106,16 +107,19 @@ namespace APINegocio.Aplications.Configuration
                 .IsRequired();
 
             builder.Property(x => x.WhatsAppNumber)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+            //.IsRequired();
 
             builder.Property(x => x.IsDeletedAt)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+                //.IsRequired();
 
             builder.Property(x => x.IsStatud)
                 .IsUnicode(false)
                 .IsRequired();
+
+            builder.Property(x => x.IsModifiedBy)
+                .IsUnicode(false);
         }
     }
 }

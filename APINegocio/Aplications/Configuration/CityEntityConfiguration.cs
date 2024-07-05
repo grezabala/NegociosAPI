@@ -34,22 +34,22 @@ namespace APINegocio.Aplications.Configuration
                 .IsRequired();
 
             builder.Property(x => x.IsDeleted)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+                //.IsRequired();
 
             builder.HasQueryFilter(x => !x.IsDeleted);
 
             builder.Property(x => x.IsDeletedAt)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+            //.IsRequired();
 
             builder.Property(x => x.IsUpdateAt)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+            //.IsRequired();
 
             builder.Property(x => x.IsUpdated)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+                //.IsRequired();
 
             builder.Property(x => x.IsStatus)
                 .IsUnicode(false)

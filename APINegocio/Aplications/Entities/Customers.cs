@@ -1,6 +1,6 @@
 ﻿namespace APINegocio.Aplications.Entities
 {
-    public class Customers
+    public partial class Customers
     {
         public int CustomerId { get; set; }
         public string CustomerName { get; set; }

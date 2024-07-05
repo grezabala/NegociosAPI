@@ -11,16 +11,16 @@ namespace APINegocio.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class CountriesController : ControllerBase
     {
-        private readonly ILocationService _LocationService;
-        private readonly IMapper Mapper;
+        private readonly ILocationService _locationService;
+        private readonly IMapper _mapper;
 
         public CountriesController(ILocationService locationService, IMapper mapper)
         {
-            _LocationService = locationService;
-            Mapper = mapper;
+            _locationService = locationService;
+            _mapper = mapper;
 
             //Agregar un el campo Código en la tabla Countries
         }
@@ -32,13 +32,26 @@ namespace APINegocio.Controllers
         [ResponseCache(CacheProfileName = "Default30Seg")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetCountries()
         {
-            var getCountry = await _LocationService.GetCountries();
-            if (getCountry == null)
-                return NotFound();
+            try
+            {
+                var getCountry = await _locationService.GetCountries();
+                var _getCountryDto = new List<CountriesDto>();
 
-            return Ok(getCountry);
+                foreach (var country in getCountry)
+                {
+                    _getCountryDto.Add(_mapper.Map<CountriesDto>(country));
+                }
+
+                return Ok(_getCountryDto);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...! No fue posible mostrar el listado de los paises.", ex);
+            }
+
         }
 
         // GET api/<CountriesController>/5
@@ -47,28 +60,82 @@ namespace APINegocio.Controllers
         [ResponseCache(CacheProfileName = "Default30Seg")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Get(int Id)
+        public async Task<IActionResult> GetCountryById(int Id)
         {
-            var getByIdCountry = await _LocationService.GetByIdCountriesAsync(Id);
-            if (getByIdCountry == null)
-                return BadRequest();
+            try
+            {
+                var getByIdCountry = await _locationService.GetByIdCountriesAsync(Id);
 
-            return Ok(getByIdCountry);
+                var getByIdCountryDto = _mapper.Map<CountriesDto>(getByIdCountry);
+
+                if (getByIdCountryDto == null)
+                    return BadRequest();
+
+                return Ok(getByIdCountryDto);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...! Algo salió mal al mostrar el país.", ex);
+            }
+
         }
 
         // GET api/<CountriesController>/5
         [AllowAnonymous]
-        [HttpGet("name/{name}")]
+        [HttpGet("~/GetCountryByName")]
         [ResponseCache(CacheProfileName = "Default30Seg")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Get(string name)
+        public async Task<IActionResult> GetCountryByName(string name)
         {
-            var getByNameCountry = await _LocationService.GetByNameCountrieAsync(name);
-            if (getByNameCountry == null)
-                return BadRequest();
+            try
+            {
+                var getByNameCountry = await _locationService.GetByNameCountrieAsync(name.ToLower().Trim());
+                var getByNameCountryDto = _mapper.Map<CountriesDto>(getByNameCountry);
 
-            return Ok(getByNameCountry);
+                if (getByNameCountryDto == null)
+                    return BadRequest();
+
+                return Ok(getByNameCountryDto);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...! Algo salió mal al mostrar el país. Por favor verificar que el nombre sea el correcto" + ":" +
+                    "O que el país se encuentra registrado.", ex);
+            }
+
+        }
+
+        [AllowAnonymous]
+        [HttpGet("~/GetCountryByCode")]
+        [ResponseCache(CacheProfileName = "Default30Seg")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IActionResult GetCountryByCode(string cod)
+        {
+            try
+            {
+                var getByCodeCountry = _locationService.GetCountriesByCode(cod.Trim());
+
+                if (getByCodeCountry == null)
+                    return NotFound();
+
+                var countriesDto = _mapper.Map<CountriesDto>(getByCodeCountry);
+                if(getByCodeCountry.Any())
+                    return Ok(countriesDto);
+
+                return NotFound();
+
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...! Algo salió mal al mostrar el país. Por favor verificar que el nombre sea el correcto" + ":" +
+                    "O que el país se encuentra registrado.", ex);
+            }
+
         }
 
         // POST api/<CountriesController>
@@ -85,19 +152,10 @@ namespace APINegocio.Controllers
             {
                 if (modelDto != null)
                 {
-                    var addCountry = Mapper.Map<Countries>(modelDto);
+                    var addCountry = _mapper.Map<Countries>(modelDto);
+                    //_locationService.Add(addCountry);
 
-                    modelDto.IsDeleted = false;
-                    modelDto.IsDeletedAt = null;
-                    modelDto.IsStatud = true;
-                    modelDto.IsUpdated = false;
-                    modelDto.IsUpdatedAt = null;
-                    modelDto.WhenDate = DateTime.Now;
-                    modelDto.IsDateCreadCountry = DateTime.Now;
-
-                    _LocationService.Add(addCountry);
-
-                    if (!await _LocationService.SaveAll())
+                    if (!await _locationService.IsCread(addCountry))
                     {
                         return Ok(addCountry);
                     }
@@ -118,7 +176,7 @@ namespace APINegocio.Controllers
         }
 
         // PUT api/<CountriesController>/5
-        [HttpPut("Id/{Id}")]
+        [HttpPut("Id/{Id:int}")]
         [ProducesResponseType(201, Type = typeof(CountriesPUTDto))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -132,19 +190,15 @@ namespace APINegocio.Controllers
                 if (Id != modelDto.CountryId)
                     return BadRequest("ERROR!... EL ID QUE ACABA DE INGRESAR NO COINCIDE CON NINGUN PAIS");
 
-                modelDto.IsDeleted = false;
-                modelDto.IsDeletedAt = DateTime.Now.AddDays(-1);
-                modelDto.IsUpdated = true;
-                modelDto.IsUpdatedAt = DateTime.Now;
 
-                var getByIdCountry = await _LocationService.GetByIdCountriesAsync(Id);
+                var getByIdCountry = await _locationService.GetByIdCountriesAsync(Id);
 
                 if (getByIdCountry == null)
                     return BadRequest();
 
-                Mapper.Map(modelDto, getByIdCountry);
+                _mapper.Map(modelDto, getByIdCountry);
 
-                if (await _LocationService.SaveAll())
+                if (await _locationService.IsUpdated(getByIdCountry))
                     return NoContent();
 
                 return Ok(getByIdCountry);
@@ -170,12 +224,12 @@ namespace APINegocio.Controllers
         {
             try
             {
-                var getById = await _LocationService.GetByIdCountriesAsync(Id);
+                var getById = await _locationService.GetByIdCountriesAsync(Id);
                 if (getById == null)
                     return NotFound();
 
-                _LocationService.GetByCountriesIsDeleted(getById);
-                if (!await _LocationService.SaveAll())
+                _locationService.GetByCountriesIsDeleted(getById);
+                if (!await _locationService.SaveAll())
                     return BadRequest("ERROR!" + "NO ES POSIBLE ELIMINAR EL PAIS");
 
                 return Ok(getById);

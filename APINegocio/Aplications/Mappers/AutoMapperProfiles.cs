@@ -55,16 +55,19 @@ namespace APINegocio.Aplications.Mappers
             CreateMap<ProveedoresPOSTDto, Proveedores>().ReverseMap();
 
             //PUT/PRVEEDORES
-            CreateMap<ProveedoresPUTDto, Proveedores>();
+            CreateMap<ProveedoresPUTDto, Proveedores>().ReverseMap();
 
             //GET/PRVEEDORES
             CreateMap<ProveedoresDto, Proveedores>().ReverseMap();
 
             //POST/CUSTOMER
-            CreateMap<CustomerPOSTDto, Customers>();
+            CreateMap<CustomerPOSTDto, Customers>().ReverseMap();
+
+            //GET/CUSTOMER
+            CreateMap<CustomerDto, Customers>().ReverseMap();
 
             //PUT/CUSTOMER
-            CreateMap<CustomerPUTDto, Customers>();
+            CreateMap<CustomerPUTDto, Customers>().ReverseMap();
 
             //POST/SHOPPING
             CreateMap<ShoppingPOSTDto, Shopping>().ReverseMap();
@@ -81,43 +84,55 @@ namespace APINegocio.Aplications.Mappers
             //PUT/Stores
             CreateMap<StoresPUTDto, Stores>().ReverseMap();
 
+            //GET/Stores
+            CreateMap<StoresDto, Stores>().ReverseMap();
+
             //GET/Inventory
             CreateMap<InventoryDto, Inventory>().ReverseMap();
 
             //PUT/SHOPPING
-            CreateMap<ShoppingPUTDto, Shopping>();
+            CreateMap<ShoppingPUTDto, Shopping>().ReverseMap();
 
             //POST/SENDERS
-            CreateMap<SendersPOSTDto, Senders>();
+            CreateMap<SendersPOSTDto, Senders>().ReverseMap();
 
             //PUT/SENDERS
-            CreateMap<SendersPUTDto, Senders>();
+            CreateMap<SendersPUTDto, Senders>().ReverseMap();
 
             //GET/SENDERS
             CreateMap<SendersDto, Senders>().ReverseMap();
 
             //POST/ORDERS
-            CreateMap<OrdersPOSTDto, Orders>();
+            CreateMap<OrdersPOSTDto, Orders>().ReverseMap();
 
             //PUT/ORDERS
-            CreateMap<OrdersPUTDto, Orders>();
+            CreateMap<OrdersPUTDto, Orders>().ReverseMap();
+
+            //GET/ORDERS
+            CreateMap<OrdersDto, Orders>().ReverseMap();
 
             //POST/TICKERS
-            CreateMap<TickersPOSTDto, Tickers>();
+            CreateMap<TickersPOSTDto, Tickers>().ReverseMap();
+
+            //GET/TICKERS
+            CreateMap<TickersDto, Tickers>().ReverseMap();
 
             //PUT/TICKERS
-            CreateMap<TickersPUTDto, Tickers>();
+            CreateMap<TickersPUTDto, Tickers>().ReverseMap();
 
             CreateMap<TickersDto, Tickers>().ReverseMap();
 
             //POST/Inventory
-            CreateMap<InventoryPOSTDto, Inventory>();
+            CreateMap<InventoryPOSTDto, Inventory>().ReverseMap();
 
             //PUT/Inventory
-            CreateMap<InventoryPUTDto, Inventory>();
+            CreateMap<InventoryPUTDto, Inventory>().ReverseMap();
 
             //POST/City
             CreateMap<CityPOSTDto, City>().ReverseMap();
+
+            //GET/City
+            CreateMap<CityDto, City>().ReverseMap();
 
             //PUT/City 
             CreateMap<CityPUTDto, City>().ReverseMap();
@@ -127,6 +142,9 @@ namespace APINegocio.Aplications.Mappers
 
             //PUT/Countries 
             CreateMap<CountriesPUTDto, Countries>().ReverseMap();
+
+            //GET/Countries 
+            CreateMap<CountriesDto, Countries>().ReverseMap();
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace APINegocio.Aplications.Entities
 {
-    public class BranchOffices
+    public partial class BranchOffices
     {
         public int BranchId { get; set; }
         public string BranchOfficesName { get; set;}

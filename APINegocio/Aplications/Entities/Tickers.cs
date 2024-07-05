@@ -1,6 +1,6 @@
 ﻿namespace APINegocio.Aplications.Entities
 {
-    public class Tickers
+    public partial class Tickers
     {
         public Tickers()
         {
@@ -21,11 +21,12 @@
         public string Description { get; set; }
         public int TransactionNumber { get; set; }
         public string CodeTicker { get; set; }
-        public DateTime CreationDate { get; set; } = DateTime.Now;
+        public DateTime? CreationDate { get; set; } 
         public bool IsDeleted { get; set; }
         public bool IsLocked { get; set; }
         public bool IsModified { get; set; }
         public bool IsImprection { get; set; }
+        public bool IsStatus { get; set; }
         public DateTime? DateImprect { get; set; }
         public DateTime? IsModifiedDate { get; set; }
         public DateTime? IsDeletedAt { get; set; } //New

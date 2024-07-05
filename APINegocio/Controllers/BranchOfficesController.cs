@@ -11,7 +11,7 @@ namespace APINegocio.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class BranchOfficesController : ControllerBase
     {
         protected IBranchOfficesService _branchOfficesService { get; }
@@ -64,11 +64,11 @@ namespace APINegocio.Controllers
             try
             {
                 var list = _branchOfficesService.GetBranchOffices();
-                var listDto = new List<BranchOfficesPOSTDto>();
+                var listDto = new List<BranchOfficesDto>();
 
                 foreach (var branchList in list)
                 {
-                    listDto.Add(_mapper.Map<BranchOfficesPOSTDto>(branchList));
+                    listDto.Add(_mapper.Map<BranchOfficesDto>(branchList));
                 }
 
                 return Ok(listDto);
@@ -138,13 +138,15 @@ namespace APINegocio.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult GetByBranchOfficeName(string nombre)
+        public IActionResult GetBranchOfficeByName(string nombre)
         {
             try
             {
-                var list = _branchOfficesService.GetByBranchOfficeName(nombre.Trim());
+                var list = _branchOfficesService.GetBranchOfficeByName(nombre.Trim());
                 if (list == null)
                     return NotFound();
+
+                var _getBranche = _mapper.Map<BranchOfficesDto>(list);
 
                 if (list.Any())
                     return Ok(list);

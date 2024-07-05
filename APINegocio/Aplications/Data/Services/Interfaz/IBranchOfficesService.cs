@@ -9,7 +9,7 @@ namespace APINegocio.Aplications.Data.Services.Interfaz
         bool IsUpdated(BranchOffices updatedBranchs);
         ICollection<BranchOffices> GetBranchOffices();
         BranchOffices GetByBranchOfficeId(int Id);
-        ICollection<BranchOffices> GetByBranchOfficeName(string name);
+        ICollection<BranchOffices> GetBranchOfficeByName(string name);
         ICollection<BranchOffices> GetByBranchOfficeCode(string code);
         ICollection<BranchOffices> GetByBranchOfficeIsDeleted(/*string branchDeleted*/);
         bool IsDeleted(BranchOffices branchs);

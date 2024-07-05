@@ -1,6 +1,6 @@
 ﻿namespace APINegocio.Aplications.Entities
 {
-    public class Stores
+    public partial class Stores
     {
         public int StorId { get; set; }
         public string StoresName { get; set;}
@@ -21,9 +21,10 @@
         public string PhoneNumber { get; set; }
         public string OtherNumber { get; set; }
         public bool IsDeleted { get; set; }
-        public DateTime IsCreadDateStore { get; set; }
-        public DateTime IsModified { get; set; }
-        public DateTime IsDeletedAt { get; set; } //New
+        public bool IsModifiedBy { get; set; } //Agregado el 01/07/24
+        public DateTime? IsCreadDateStore { get; set; }
+        public DateTime? IsModified { get; set; }
+        public DateTime? IsDeletedAt { get; set; } //New
         public bool IsStatud { get; set; } //New
     }
 }

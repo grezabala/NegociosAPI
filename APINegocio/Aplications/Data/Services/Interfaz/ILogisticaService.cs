@@ -12,11 +12,12 @@ namespace APINegocio.Aplications.Data.Services.Interfaz
         //Customers
         Task<IEnumerable<Customers>> GetCliente();
         Task<Customers> GetCustomersByIdAsync(int Id);
-        Task<Customers> GetCustomersByNameAsync(string names);
+        Task<ICollection<Customers>> GetCustomersByNameAsync(string names);
         Task<ICollection<Customers>> GetByCustomersByCodeAsync(string code);
+        Task<ICollection<Customers>> GetByCustomersByCodePostalAsync(string codePostal);
         bool GetByCustomerIsDeleted(Customers customers);
-
-       
+        Task<bool> IsCread(Customers customers);
+        Task<bool> IsUpdated (Customers customers);
 
         //Orders
         Task<IEnumerable<Orders>> GetOrders();

@@ -15,6 +15,7 @@ namespace APINegocio.Aplications.Configuration
 
 
             builder.HasKey(x => x.CountryId);
+
             builder.Property(x => x.CountryId)
                 .IsUnicode(false)
                 .IsRequired();
@@ -29,14 +30,14 @@ namespace APINegocio.Aplications.Configuration
                 .IsRequired();
 
             builder.Property(x => x.IsDeleted)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+                //.IsRequired();
 
             builder.HasQueryFilter(x => !x.IsDeleted);
 
             builder.Property(x => x.IsDeletedAt)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+                //.IsRequired();
 
             builder.Property(x => x.IsRecurring)
                 .IsUnicode(false)
@@ -61,6 +62,12 @@ namespace APINegocio.Aplications.Configuration
 
             builder.Property(x => x.CodeCountries)
                 .IsUnicode(false); //Agregado 26/06/24
+
+            builder.Property(x => x.IsUpdatedAt)
+                .IsUnicode(false);
+
+            builder.Property(x => x.IsUpdated)
+                .IsUnicode(false);
 
 
         }

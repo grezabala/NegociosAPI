@@ -230,8 +230,10 @@ namespace APINegocio.Aplications.Data.Services.Repository
                 _updatedInventario.IsUpdatedAt = DateTime.Now;
                 _updatedInventario.IsStatus = true;
                 _updatedInventario.StoresStorId = _updatedInventario.StorId;
+
                 updated.IsDeleted = false;
                 updated.IsDeletedAt = null;
+                updated.IsStatus = true;
 
                 _db.Entry(_updatedInventario).State = EntityState.Modified;
                 return IsSaveAll();

@@ -204,7 +204,7 @@ namespace APINegocio.Aplications.Data.Services.Repository
             }
         }
 
-        public ICollection<BranchOffices> GetByBranchOfficeName(string name)
+        public ICollection<BranchOffices> GetBranchOfficeByName(string name)
         {
             try
             {

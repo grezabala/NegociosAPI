@@ -66,10 +66,18 @@ namespace APINegocio.API.Controllers
             try
             {
                 var getOrder = await _logisticaService.GetOrders();
-                if (getOrder == null)
+                var getOrderDto = new List<OrdersDto>();
+
+
+                foreach (var orders in getOrder)
+                {
+                    getOrderDto.Add(_mapper.Map<OrdersDto>(orders));
+                }
+
+                if (getOrderDto == null)
                     return NotFound("LOS PEDIDOS NO FUERON ENCONTRADO " + "POR FAVOR CONTACTAR A TI");
 
-                return Ok(getOrder);
+                return Ok(getOrderDto);
             }
             catch (Exception ex)
             {
@@ -126,10 +134,13 @@ namespace APINegocio.API.Controllers
             try
             {
                 var getByIdOrder = await _logisticaService.GetOrdersByIdAsync(Id);
-                if (getByIdOrder == null)
+                var getByIdOrderDto = _mapper.Map<OrdersDto>(getByIdOrder);
+
+
+                if (getByIdOrderDto == null)
                     return NotFound("ERROR!... EL PEDIDO NO FUE ENCONTRADO");
 
-                return Ok(getByIdOrder);
+                return Ok(getByIdOrderDto);
 
             }
             catch (Exception ex)
@@ -152,11 +163,14 @@ namespace APINegocio.API.Controllers
             try
             {
                 var getNameOrder = await _logisticaService.GetOrdersByNameAsync(model);
-                if (getNameOrder == null)
+                var getNameOrderDto = _mapper.Map<OrdersDto>(getNameOrder);
+
+
+                if (getNameOrderDto == null)
                     return NotFound("ERROR!... EL NOMBRE DEL PEDIDO NO FUE ENCONTRADO " +
                         "POR FAVOR VERIFIQUE QUE HAYA REALIZADO EL PEDIDO");
 
-                return Ok(getNameOrder);
+                return Ok(getNameOrderDto);
             }
             catch (Exception ex)
             {
@@ -178,11 +192,13 @@ namespace APINegocio.API.Controllers
             try
             {
                 var getCodeOrder = await _logisticaService.GetOrdersByCodeAsync(code);
-                if (getCodeOrder == null)
+                var getCodeOrderDto = _mapper.Map<OrdersDto>(getCodeOrder);
+
+                if (getCodeOrderDto == null)
                     return NotFound("ERROR!... EL CODIGO DEL PEDIDO NO FUE ENCONTRADO " +
                         "POR FAVOR VERIFIQUE QUE HAYA REALIZADO EL PEDIDO");
 
-                return Ok(getCodeOrder);
+                return Ok(getCodeOrderDto);
             }
             catch (Exception ex)
             {
@@ -214,7 +230,7 @@ namespace APINegocio.API.Controllers
                 updatedOrder.IsDeleted = false;
                 updatedOrder.IsCreadOrderDate = null;
                 updatedOrder.DateOrder = null;
-                updatedOrder.IsAsset = false;
+                updatedOrder.IsAsset = true;
                 updatedOrder.IsModified = false;
                 updatedOrder.IsModifiedOrderDate = DateTime.Now;
                 updatedOrder.IsDeletedAt = null;

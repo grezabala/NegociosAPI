@@ -25,8 +25,8 @@ namespace APINegocio.Aplications.Configuration
                 .IsRequired();
 
             builder.Property(x => x.CreationDate)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+                //.IsRequired();
 
             builder.Property(x => x.CustomerId)
                 .IsUnicode(false)
@@ -84,34 +84,36 @@ namespace APINegocio.Aplications.Configuration
                 .IsRequired();
 
             builder.Property(x => x.IsDeleted)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+                //.IsRequired();
 
-            builder.HasQueryFilter(x => x.IsDeleted);
+            builder.HasQueryFilter(x => !x.IsDeleted);
 
             builder.Property(x => x.IsLocked)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+            //.IsRequired();
 
             builder.Property(x => x.IsModified)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+                //.IsRequired();
 
             builder.Property(x => x.IsModifiedDate)
                 .IsUnicode(false);
-           
+
+            builder.Property(x => x.IsStatus)
+               .IsUnicode(false);
 
             builder.Property(x => x.IsImprection)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+            //  .IsRequired();
 
             builder.Property(x => x.DateImprect)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+            //.IsRequired();
 
             builder.Property(x => x.IsDeletedAt)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+                //.IsRequired();
         }
     }
 }

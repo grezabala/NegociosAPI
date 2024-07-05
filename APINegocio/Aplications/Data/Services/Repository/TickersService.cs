@@ -12,11 +12,15 @@ namespace APINegocio.Aplications.Data.Services.Repository
     {
         private readonly APINegociosDbContext _db;
 
+        public TickersService(APINegociosDbContext aPINegociosDbContext)
+        {
+            _db = aPINegociosDbContext;    
+        }
+
         public async Task<ICollection<Tickers>> GetByTickersDateAsync(DateTime date)
         {
             try
             {
-
                 return await _db.Tickers
                     .Where(x => x.CreationDate == date.Date)
                     .OrderBy(x => x.TickerId)
@@ -35,11 +39,14 @@ namespace APINegocio.Aplications.Data.Services.Repository
             try
             {
                 var _getTickerIsDeleted = _db.Tickers.Find(senders.TickerId);
+
                 if (_getTickerIsDeleted != null)
                 {
                     _getTickerIsDeleted.IsDeleted = true;
                     _getTickerIsDeleted.IsLocked = false;
+                    _getTickerIsDeleted.IsStatus = false;
                     _getTickerIsDeleted.IsDeletedAt = DateTime.Now;
+
                      _db.SaveChanges();
                 }
 
@@ -59,8 +66,6 @@ namespace APINegocio.Aplications.Data.Services.Repository
                 return await _db.Tickers
                     .OrderBy(e => e.NIF)
                     .AsNoTracking().ToListAsync();
-
-
             }
             catch (Exception ex)
             {
@@ -74,15 +79,18 @@ namespace APINegocio.Aplications.Data.Services.Repository
         {
             try
             {
-                var _getRNC = _db.Tickers.FindAsync(TickerRNC);
-                if (await _getRNC != null)
-                {
-                    return await _db.Tickers
-                          .OrderBy(e => e.RNC)
-                          .AsNoTracking().ToListAsync();
 
-                }
-                return null;
+                return await _db.Set<Tickers>().OrderBy(e => e.RNC).AsTracking().ToListAsync();
+                    
+                //var _getRNC = _db.Tickers.FindAsync(TickerRNC);
+                //if (await _getRNC != null)
+                //{
+                //    return await _db.Tickers
+                //          .OrderBy(e => e.RNC)
+                //          .AsNoTracking().ToListAsync();
+
+                //}
+                //return null;
             }
             catch (Exception ex)
             {
@@ -118,10 +126,10 @@ namespace APINegocio.Aplications.Data.Services.Repository
 
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                throw;
+                throw new Exception("Error...!",ex);
             }
         }
 
@@ -158,7 +166,7 @@ namespace APINegocio.Aplications.Data.Services.Repository
             catch (Exception ex)
             {
 
-                throw new Exception("Error!!! No hay Ticker emitido con el nombre del colaborador, por favor verique el nombre esta correcto." +
+                throw new Exception("Error!!! No hay Ticker emitido con el nombre del colaborador, por favor verique el nombre esta correcto. " +
                     "Intente buscar el Ticker por ID, RNC, NIF o por el Código ", ex);
             }
         }
@@ -169,10 +177,14 @@ namespace APINegocio.Aplications.Data.Services.Repository
             {
                 if (tickers != null)
                 {
-                    tickers.IsLocked = true;
+                    tickers.CreationDate = DateTime.Now;
+                    tickers.IsStatus = true;
+                    tickers.IsLocked = false;
                     tickers.IsDeleted = false;
                     tickers.IsModified = false;
                     tickers.IsModifiedDate = null;
+                    tickers.NIF = new Random().Next();
+                    tickers.RNC = new Random().Next();
 
                     _db.Add(tickers);
                     return IsSaveAll();
@@ -243,7 +255,7 @@ namespace APINegocio.Aplications.Data.Services.Repository
         {
             try
             {
-                return _db.Tickers.Any(e => e.NIF == NIF);
+                return _db.Set<Tickers>().Any(e => e.NIF == NIF);
             }
             catch (Exception ex)
             {
@@ -252,11 +264,11 @@ namespace APINegocio.Aplications.Data.Services.Repository
             }
         }
 
-        public bool IsExisteByTickersRNC(int RNC)
+        public bool IsExisteByTickersRNC(int rnc)
         {
             try
             {
-                return _db.Tickers.Any(e => e.RNC == RNC);
+                return _db.Set<Tickers>().Any(e => e.RNC == rnc);
             }
             catch (Exception ex)
             {
@@ -303,7 +315,8 @@ namespace APINegocio.Aplications.Data.Services.Repository
                     _updatedTicker.TransactionNumber = tickers.TransactionNumber;
                     _updatedTicker.CodeTicker = tickers.CodeTicker;
                     _updatedTicker.CodeTicker = tickers.CodeTicker;
-                   
+
+                    tickers.IsStatus = true;
                     tickers.IsDeleted = false;
                     tickers.IsLocked = true;
                     tickers.IsModified = true;
@@ -313,7 +326,6 @@ namespace APINegocio.Aplications.Data.Services.Repository
 
                     _db.Entry(_updatedTicker).State = EntityState.Modified;
                     return IsSaveAll();
-
 
                 }
 

@@ -1,6 +1,6 @@
 ﻿namespace APINegocio.Aplications.Entities
 {
-    public class Orders
+    public partial class Orders
     {
         public Orders()
         {

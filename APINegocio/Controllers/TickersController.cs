@@ -28,7 +28,7 @@ namespace APINegocio.API.Controllers
         [ResponseCache(CacheProfileName = "Default30Seg")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetTickers()
         {
             try
             {
@@ -50,24 +50,24 @@ namespace APINegocio.API.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("Id")]
+        [HttpGet("{Id:int}")]
         [ResponseCache(CacheProfileName = "Default30Seg")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult Get(int Id)
+        public IActionResult GetTickerById(int Id)
         {
             try
             {
                 var getTickerById = _tickerServices.GetTickersById(Id);
 
-                if (getTickerById == null)
+                var listDto = _mapper.Map<TickersDto>(getTickerById);
+
+                if (listDto == null)
                     return NotFound("ERROR! " + "EL TICKER NO SE ENCONTRO...");
 
-                var listDto = new List<TickersDto>(getTickerById.TickerId);
-
-                return Ok(getTickerById);
+                return Ok(listDto);
             }
             catch (Exception ex)
             {
@@ -89,10 +89,12 @@ namespace APINegocio.API.Controllers
             try
             {
                 var _getTickerByNIF = await _tickerServices.GetByTickersNIFAsync(nif);
+
                 if (_getTickerByNIF == null)
                     return BadRequest("ERROR! " + "EL TICKER NO SE ENCONTRO...");
 
                 var listDto = new List<TickersDto>();
+
                 foreach (var ticker in _getTickerByNIF)
                 {
                     listDto.Add(_mapper.Map<TickersDto>(ticker));
@@ -206,7 +208,7 @@ namespace APINegocio.API.Controllers
 
         }
 
-        [HttpDelete("Id/{Id}")]
+        [HttpDelete("Id/{Id:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -216,7 +218,13 @@ namespace APINegocio.API.Controllers
         {
             try
             {
+                if (!_tickerServices.IsExisteByTickersId(Id))
+                {
+                    return NotFound("ERROR...! NO EXISTE NINGUN TICKER EMITIDO CON ESE ID");
+                }
+
                 var deletedTicker = _tickerServices.GetTickersById(Id);
+
                 if (deletedTicker == null)
                     return NotFound("ERROR! " + "EL TICKER NO FUE ELIMINADO");
 
@@ -248,20 +256,27 @@ namespace APINegocio.API.Controllers
         {
             try
             {
-                if (ModelState.IsValid)
+                if (!ModelState.IsValid)
+                {
                     return BadRequest(ModelState);
+                }
+
 
                 if (modelDto == null)
+                {
                     return BadRequest(ModelState);
+                }
 
-                if (_tickerServices.IsExisteByTickersRNC(modelDto.RNC))
+                var tick = new Tickers();
+
+                if (_tickerServices.IsExisteByTickersRNC(tick.RNC))
                 {
                     ModelState.AddModelError("", "Error! El Ticker ya se encuentra registrado, por lo tanto ya fue emitidos");
                     return StatusCode(404, ModelState);
 
                 }
 
-                if (_tickerServices.IsExisteByTickersNIF(modelDto.NIF)) 
+                if (_tickerServices.IsExisteByTickersNIF(tick.NIF))
                 {
                     ModelState.AddModelError("", "Error! El Ticker ya se encuentra registrado, por lo tanto ya fue emitidos");
                     return StatusCode(404, ModelState);
@@ -270,9 +285,9 @@ namespace APINegocio.API.Controllers
 
                 var postTickers = _mapper.Map<Tickers>(modelDto);
 
-                if (!_tickerServices.IsCreadAsync(postTickers)) 
+                if (!_tickerServices.IsCreadAsync(postTickers))
                 {
-                  return Ok(postTickers);
+                    return Ok(postTickers);
                 }
 
                 return Ok(postTickers);
@@ -311,15 +326,15 @@ namespace APINegocio.API.Controllers
 
                 _mapper.Map(modelDto, putTicker);
 
-                if(!_tickerServices.IsSaveAll())
-                        return BadRequest();
+                if (!_tickerServices.IsSaveAll())
+                    return BadRequest();
 
                 return Ok(putTicker);
             }
             catch (Exception ex)
             {
 
-                throw new Exception("Error!!! Algo salió mal al modificar el ticker",ex);
+                throw new Exception("Error!!! Algo salió mal al modificar el ticker", ex);
             }
 
 

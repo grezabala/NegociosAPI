@@ -32,6 +32,7 @@ namespace APINegocio.Aplications.Data.ContextDB
         public virtual DbSet<Stores> Stores { get; set; }
         public virtual DbSet<Inventory> Inventory { get; set; }
         public virtual DbSet<BranchOffices> BranchOffices { get; set; }
+        public virtual DbSet<Operaciones> Operaciones { get; set; } //Agregada el 4/07/24
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

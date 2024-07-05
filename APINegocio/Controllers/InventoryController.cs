@@ -12,7 +12,7 @@ namespace APINegocio.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class InventoryController : ControllerBase
     {
         private readonly IInventoryService _inventoryService;
@@ -66,9 +66,13 @@ namespace APINegocio.Controllers
             try
             {
                 var getById = await _inventoryService.GetByInventoryId(Id);
-                if (getById == null)
+
+                var getByIdDto = _mapper.Map<InventoryDto>(getById);
+
+                if (getByIdDto == null)
                     return NotFound("ERROR! NO SE ENCONTRO NINGUN INVENTARIO ASOCIADO A ESE ID");
-                return Ok(getById);
+
+                return Ok(getByIdDto);
             }
             catch (Exception ex)
             {
@@ -92,10 +96,13 @@ namespace APINegocio.Controllers
             try
             {
                 var getNumber = await _inventoryService.GetByInventoriesNumber(number);
-                if (getNumber == null)
+
+                var getNumberDto = _mapper.Map<InventoryDto>(getNumber);
+
+                if (getNumberDto == null)
                     return NotFound("ERROR! NO SE ENCONTRO NINGUN INVENTARIO ASOCIADO A ESTE NUMERO");
 
-                return Ok(getNumber);
+                return Ok(getNumberDto);
             }
             catch (Exception ex)
             {
@@ -118,10 +125,13 @@ namespace APINegocio.Controllers
             try
             {
                 var getName = await _inventoryService.GetByInventoryName(name);
-                if (getName == null)
+
+                var getNameDto = _mapper.Map<InventoryDto>(getName);
+
+                if (getNameDto == null)
                     return NotFound("ERROR! NO SE ENCONTRO NINGUN INVENTARIO ASOCIADO A ESTE NOMBRE");
 
-                return Ok(getName);
+                return Ok(getNameDto);
             }
             catch (Exception ex)
             {
@@ -143,10 +153,13 @@ namespace APINegocio.Controllers
             try
             {
                 var getCode = await _inventoryService.GetByCodeInventory(code);
-                if (getCode == null)
+
+                var getCodeDto = _mapper.Map<InventoryDto>(getCode);
+
+                if (getCodeDto == null)
                     return NotFound("ERROR! NO SE ENCONTRO NINGUN INVENTARIO ASOCIADO A ESTE CODIGO");
 
-                return Ok(getCode);
+                return Ok(getCodeDto);
             }
             catch (Exception ex)
             {
@@ -230,7 +243,7 @@ namespace APINegocio.Controllers
 
                 _mapper.Map(pUTDto, getInventario);
 
-                if (_inventoryService.IsSaveAll())
+                if (!_inventoryService.IsSaveAll())
                     return NoContent();
 
                 return Ok(getInventario);

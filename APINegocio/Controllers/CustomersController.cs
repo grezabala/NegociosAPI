@@ -10,7 +10,7 @@ namespace APINegocio.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class CustomersController : ControllerBase
     {
         private readonly ILogisticaService _logiticaServices;
@@ -67,9 +67,17 @@ namespace APINegocio.Controllers
             try
             {
                 var getCustomer = await _logiticaServices.GetCliente();
-                if (getCustomer == null)
+                var getCustomerDto = new List<CustomerDto>();
+
+                foreach (var customers in getCustomer)
+                {
+                    getCustomerDto.Add(_mapper.Map<CustomerDto>(customers));
+                }
+
+                if (getCustomerDto == null)
                     return NotFound();
-                return Ok(getCustomer);
+
+                return Ok(getCustomerDto);
             }
             catch (Exception ex)
             {
@@ -91,10 +99,13 @@ namespace APINegocio.Controllers
             try
             {
                 var getCustomerById = await _logiticaServices.GetCustomersByIdAsync(Id);
-                if (getCustomerById is null)
+
+                var getCustomerByIdDto = _mapper.Map<CustomerDto>(getCustomerById);
+
+                if (getCustomerByIdDto is null)
                     return NotFound("ERROR! EL CLIENTE NO FUE ENCONTRADO");
 
-                return Ok(getCustomerById);
+                return Ok(getCustomerByIdDto);
             }
             catch (Exception ex)
             {
@@ -115,11 +126,18 @@ namespace APINegocio.Controllers
         {
             try
             {
-                var getCustomerName = await _logiticaServices.GetCustomersByNameAsync(nombre);
+                var getCustomerName = await _logiticaServices.GetCustomersByNameAsync(nombre.Trim());
                 if (getCustomerName == null)
-                    return NotFound("ERROR!... EL NOMBRE DEL FUE CLIENTE ENCONTRADO");
+                    return NotFound();
 
-                return Ok(getCustomerName);
+                //var getCustomerNameDto = _mapper.Map<CustomerDto>(getCustomerName);
+
+                if (getCustomerName.Any())
+                    return Ok(getCustomerName);
+
+
+                return NoContent();
+
             }
             catch (Exception ex)
             {
@@ -140,11 +158,52 @@ namespace APINegocio.Controllers
         {
             try
             {
-                var _getCustomerCodePostal = await _logiticaServices.GetByCustomersByCodeAsync(codePostal);
-                if (_getCustomerCodePostal == null)
-                    return NotFound("ERROR!... EL NOMBRE DEL FUE CLIENTE ENCONTRADO");
+                var _getCustomerCodePostal = await _logiticaServices.GetByCustomersByCodePostalAsync(codePostal);
 
-                return Ok(_getCustomerCodePostal);
+                if (_getCustomerCodePostal == null)
+                    return NotFound();
+
+                //var _getCustomerCodePostalDto = _mapper.Map<CustomerDto>(_getCustomerCodePostal);
+
+                if (_getCustomerCodePostal.Any())
+                    return Ok(_getCustomerCodePostal);
+
+
+                return NotFound("ERROR!... EL NOMBRE DEL FUE CLIENTE ENCONTRADO");
+
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error!!! No fue posible mostrar los clientes", ex);
+            }
+
+        }
+
+        [AllowAnonymous]
+        [HttpGet("~/GetByCustomerCode")]
+        [ResponseCache(CacheProfileName = "Default30Seg")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetByCustomerCode(string code)
+        {
+            try
+            {
+                var _getCustomerCodePostal = await _logiticaServices.GetByCustomersByCodeAsync(code);
+
+                if (_getCustomerCodePostal == null)
+                    return NotFound();
+
+                //var _getCustomerCodePostalDto = _mapper.Map<CustomerDto>(_getCustomerCodePostal);
+
+                if (_getCustomerCodePostal.Any())
+                    return Ok(_getCustomerCodePostal);
+
+
+                return NotFound("ERROR!... EL NOMBRE DEL FUE CLIENTE ENCONTRADO");
+
             }
             catch (Exception ex)
             {
@@ -168,12 +227,6 @@ namespace APINegocio.Controllers
                 if (modelDto != null)
                 {
                     var postCustomer = _mapper.Map<Customers>(modelDto);
-                    postCustomer.IsDeleted = false;
-                    postCustomer.IsDeletedAt = null;
-                    postCustomer.IsModified = false;
-                    postCustomer.IsUpdatedDate = null;
-                    postCustomer.CreatedDate = DateTime.Now;
-                    postCustomer.IsStatu = true;
 
                     _logiticaServices.Add(postCustomer);
 
@@ -207,13 +260,6 @@ namespace APINegocio.Controllers
                 var putCustomer = await _logiticaServices.GetCustomersByIdAsync(modelDto.CustomerId!);
                 if (putCustomer is null)
                     return BadRequest();
-
-                modelDto.IsDeleted = false;
-                modelDto.IsUpdatedDate = DateTime.Now;
-                modelDto.IsModified = true;
-                modelDto.IsDeletedAt = null;
-                modelDto.IsStatu = true;
-                modelDto.CreatedDate = null;
 
                 _mapper.Map(modelDto, putCustomer);
 
