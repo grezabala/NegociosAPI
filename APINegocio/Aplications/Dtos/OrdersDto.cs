@@ -5,6 +5,7 @@
         public int OrderId { get; set; }
         public int CustomerId { get; set; }
         public int SenderId { get; set; }
+        public int ShoppingId { get; set; }
         public DateTime? DateOrder { get; set; }
         public string OrderCode { get; set; }
         public string OrderName { get; set; }
@@ -20,6 +21,7 @@
         public int SenderId { get; set; }
         public string OrderCode { get; set; }
         public string OrderName { get; set; }
+        public int ShoppingId { get; set; }
 
     }
 
@@ -30,6 +32,7 @@
         public int SenderId { get; set; }
         public string OrderName { get; set; }
         public string OrderCode { get; set; }
+        public int ShoppingId { get; set; }
 
     }
 }

@@ -54,7 +54,9 @@ namespace APINegocio.Aplications.Configuration
 
             builder.Property(x => x.StorId)
                 .IsUnicode(false)
-                .IsRequired();
+                .IsRequired(); 
+            
+            //builder.HasOne(x => x.).WithMany(x => x.Err)
 
             builder.Property(x => x.WhenDate)
                 .IsUnicode(false)
@@ -69,7 +71,7 @@ namespace APINegocio.Aplications.Configuration
             builder.Property(x => x.IsUpdated)
                 .IsUnicode(false);
 
-
+          
         }
     }
 }

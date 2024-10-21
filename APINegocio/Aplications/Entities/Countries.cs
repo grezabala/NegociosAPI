@@ -16,5 +16,9 @@
         public bool IsStatud { get; set; } //New 04/08
         public bool? IsUpdated { get; set; }
         public DateTime? IsUpdatedAt { get; set; }
+        public int? ProveedoresProveedorId { get; set; }
+        public int? StoresStorId { get; set; }
+        public virtual Stores Stores { get; set; }
+        public virtual Proveedores Proveedores { get; set; }
     }
 }

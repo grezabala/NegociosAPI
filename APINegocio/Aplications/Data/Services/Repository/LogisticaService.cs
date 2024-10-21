@@ -243,8 +243,15 @@ namespace APINegocio.Aplications.Services.Repository
         {
             try
             {
-                var getOrders = await _db.Orders.ToListAsync();
-                return getOrders;
+                var getOrders = await _db.Set<Orders>()
+                    .OrderBy(x => x.OrderId)
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                if (getOrders != null)
+                    return getOrders;
+
+                return new List<Orders>();
             }
             catch (Exception ex)
             {

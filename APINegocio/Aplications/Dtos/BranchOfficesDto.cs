@@ -1,6 +1,6 @@
 ﻿namespace APINegocio.Aplications.Dtos
 {
-    public class BranchOfficesDto
+    public partial class BranchOfficesDto
     {
         public int BranchId { get; set; }
         public string BranchOfficesName { get; set; }
@@ -36,8 +36,9 @@
         public string WhatsAppNumber { get; set; }
         public string PhoneNumber { get; set; }
         public string OtherNumber { get; set; }
-        public float Latitud { get; set; }
-        public float Longitud { get; set; }
+
+        //public float Latitud { get; set; }
+        //public float Longitud { get; set; }
 
     }
     public partial class BranchOfficesPUTDto

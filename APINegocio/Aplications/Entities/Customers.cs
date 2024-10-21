@@ -5,8 +5,9 @@
         public int CustomerId { get; set; }
         public string CustomerName { get; set; }
         public string CustomerEmail { get; set; }
+        public string? CustomerCode { get; set; }
         public string CustomerPhone { get; set; }
-        public string Direction { get;  set; }
+        public string Direction { get; set; }
         public string City { get; set; }
         public string PostalCode { get; set; }
         public string CodeCustomer { get; set; } //Agregado 26/06/24
@@ -17,5 +18,6 @@
         public bool IsStatu { get; set; }
         public bool IsModified { get; set; }
         public DateTime? IsDeletedAt { get; set; } //New
+        public virtual Orders Orders { get; set; }
     }
 }

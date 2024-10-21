@@ -10,6 +10,7 @@
         public string City { get; set; }
         public string PostalCode { get; set; }
         public string CodeCustomer { get; set; } //Agregado 26/06/24
+        public string CustomerCode { get; set; }
         public string Country { get; set; }
         public DateTime? CreatedDate { get; set; }
         public bool IsStatu { get; set; }

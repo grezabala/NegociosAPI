@@ -136,7 +136,6 @@ namespace APINegocio.API.Controllers
                 var getByIdOrder = await _logisticaService.GetOrdersByIdAsync(Id);
                 var getByIdOrderDto = _mapper.Map<OrdersDto>(getByIdOrder);
 
-
                 if (getByIdOrderDto == null)
                     return NotFound("ERROR!... EL PEDIDO NO FUE ENCONTRADO");
 
@@ -228,10 +227,11 @@ namespace APINegocio.API.Controllers
                 _mapper.Map(modelDto, updatedOrder);
 
                 updatedOrder.IsDeleted = false;
-                updatedOrder.IsCreadOrderDate = null;
-                updatedOrder.DateOrder = null;
+                updatedOrder.IsCreadOrderDate = updatedOrder.IsCreadOrderDate;
+                updatedOrder.DateOrder = updatedOrder.DateOrder;
                 updatedOrder.IsAsset = true;
-                updatedOrder.IsModified = false;
+                updatedOrder.IsCread = false;
+                updatedOrder.IsModified = true;
                 updatedOrder.IsModifiedOrderDate = DateTime.Now;
                 updatedOrder.IsDeletedAt = null;
 

@@ -1,8 +1,8 @@
-﻿using System;
+﻿ using System;
 
 namespace APINegocio.Aplications.Entities
 {
-    public class Productos
+    public partial class Productos
     {
         public int ProductId { get; set; }
         public string ProductName { get; set; }

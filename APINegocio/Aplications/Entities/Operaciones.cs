@@ -15,5 +15,6 @@ namespace APINegocio.Aplications.Entities
         public DateTime? IsDeletedAt { get; set;}
         public bool IsUpdatedBy { get; set; }
         public DateTime? IsUpdatedAt { get; set;}
+        public bool IsStatu { get; set; }
     }
 }

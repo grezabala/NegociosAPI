@@ -89,11 +89,16 @@ namespace APINegocio.Aplications.Data.Services.Repository
 
         }
 
-        public async Task<Shopping> GetShoppingByCodeAsync(string code)
+        public async Task<ICollection<Shopping>> GetShoppingByCodeAsync(string code)
         {
             try
             {
-                return await _db.Shoppings.OrderBy(e => e.ShoppingCode).FirstOrDefaultAsync(x => x.ShoppingCode == code);
+
+                IQueryable<Shopping> query = _db.Set<Shopping>().AsQueryable();
+                if (!string.IsNullOrEmpty(code))
+                    query = query.Where(e => e.ShoppingCode.Contains(code.ToLower().Trim()) || e.ShoppingCode.Contains(code.ToLower().Trim()));
+
+                return await query.OrderBy(e => e.ShoppingCode).ToListAsync();
 
             }
             catch (Exception ex)

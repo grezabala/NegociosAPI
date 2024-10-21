@@ -135,6 +135,7 @@ namespace APINegocio.Controllers
             try
             {
                 var addCity = _mapper.Map<City>(modelDto);
+                addCity.CountriesCountryId = new Random().Next();
 
                 _locationService.Add(addCity);
 

@@ -52,6 +52,11 @@ namespace APINegocio.Aplications.Configuration
                 .HasMaxLength(150)
                 .IsRequired();
 
+            builder.Property(x => x.CustomerCode)
+             .IsUnicode(false)
+             .HasMaxLength(150);
+             //.IsRequired();
+
             builder.Property(x => x.Direction)
                 .IsUnicode(false)
                 .HasMaxLength(250)
@@ -82,7 +87,13 @@ namespace APINegocio.Aplications.Configuration
 
             builder.Property(x => x.IsDeletedAt)
                 .IsUnicode(false);
-                //.IsRequired();
+            //.IsRequired();
+
+            //builder.HasOne(x => x.Orders).WithMany(x => x.Customers)
+            //    .HasPrincipalKey(x => x.CustomerId).HasPrincipalKey(x => x.CustomerId)
+            //    .OnDelete(DeleteBehavior.ClientNoAction)
+            //    .HasConstraintName($"FK_{nameof(Customers)}_{nameof(Orders)}_{nameof(CustomerId)}");
+                
         }
     }
 }

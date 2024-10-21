@@ -22,6 +22,8 @@ namespace APINegocio.Aplications.Data.Services.Repository
                 creadBranchs.IsCreadAt = DateTime.Now;
                 creadBranchs.IsCreadBy = true;
                 creadBranchs.IsStatud = true;
+                creadBranchs.Latitud = 69.98857f;
+                creadBranchs.Longitud = -70.16265f;
 
                 _db.Add(creadBranchs);
                 return IsSaveAll();
@@ -103,7 +105,7 @@ namespace APINegocio.Aplications.Data.Services.Repository
 
         public bool IsSaveAll()
         {
-            try
+           try
             {
                 return _db.SaveChanges() >= 0 ? true : false;
             }
@@ -118,11 +120,17 @@ namespace APINegocio.Aplications.Data.Services.Repository
         {
             try
             {
-                //_db.Update(updatedBranchs);
+                //using (var _Db = _db) 
+                //{
+                // var entity = _Db.BranchOffices.Include(x => x.BranchId).SingleOrDefault(x => x.BranchId == )  
+                
+                //}
 
-                var _updatedBranchOffice = GetByBranchOfficeId(updatedBranchs.BranchId) ?? throw new ArgumentNullException("Error! El Id ingresado no esta registrado a ninguna Sucursal");
+                    //_db.Update(updatedBranchs);
 
-                _updatedBranchOffice.BranchId = updatedBranchs.BranchId;
+                    var _updatedBranchOffice = GetByBranchOfficeId(updatedBranchs.BranchId) ?? throw new ArgumentNullException("Error! El Id ingresado no esta registrado a ninguna Sucursal");
+
+                ////_updatedBranchOffice.BranchId = updatedBranchs.BranchId;
                 _updatedBranchOffice.BranchOfficesName = updatedBranchs.BranchOfficesName;
                 _updatedBranchOffice.Direccion = updatedBranchs.Direccion;
                 _updatedBranchOffice.BranchOfficesCode = updatedBranchs.BranchOfficesCode;
@@ -137,19 +145,20 @@ namespace APINegocio.Aplications.Data.Services.Repository
                 _updatedBranchOffice.OtherNumber = updatedBranchs.OtherNumber;
                 _updatedBranchOffice.Latitud = updatedBranchs.Latitud;
                 _updatedBranchOffice.Longitud = updatedBranchs.Longitud;
-                _updatedBranchOffice.IsStatud = updatedBranchs.IsStatud;
+
+                updatedBranchs.IsStatud = true;
                 updatedBranchs.IsUpdatedAt = DateTime.Now;
                 updatedBranchs.IsUpdatedBy = true;
                 updatedBranchs.IsDeletedAt = null;
                 updatedBranchs.IsDeletedBy = false;
 
                 _db.Entry(_updatedBranchOffice).State = EntityState.Modified;
-                return IsSaveAll();
+                return _db.SaveChanges() > 0;
             }
             catch (Exception ex)
             {
 
-                throw new Exception("Error!", ex);
+                throw new Exception("Error...!", ex);
             }
         }
 
@@ -175,11 +184,11 @@ namespace APINegocio.Aplications.Data.Services.Repository
             {
                 IQueryable<BranchOffices> query = _db.Set<BranchOffices>();
                 if (!string.IsNullOrEmpty(code))
-                    query = query.Where(e => e.BranchOfficesCode.Contains(code) || e.BranchOfficesCode.Contains(code));
+                    query = query.Where(e => e.BranchOfficesCode.Contains(code.ToLower().Trim()) || e.BranchOfficesCode.Contains(code.ToLower().Trim()));
 
 
-                return query.AsNoTracking()
-                            .ToList();
+                return query.ToList();
+
 
 
                 //_db.Set<BranchOffices>().FirstOrDefault(e => e.BranchOfficesCode == code);
@@ -195,12 +204,20 @@ namespace APINegocio.Aplications.Data.Services.Repository
         {
             try
             {
-                return _db.Set<BranchOffices>().FirstOrDefault(e => e.BranchId == Id);
+                //return _db.Set<BranchOffices>().OrderBy(e => e.BranchOfficesName).FirstOrDefault();
+                var _getBranchId = _db.BranchOffices.Find(Id);
+                if (_getBranchId != null)
+                {
+                    return _db.BranchOffices.FirstOrDefault();
+
+                }
+
+                return new BranchOffices();
             }
             catch (Exception ex)
             {
 
-                throw new Exception("Error!", ex);
+                throw new Exception("Error...!", ex);
             }
         }
 
@@ -211,7 +228,7 @@ namespace APINegocio.Aplications.Data.Services.Repository
                 IQueryable<BranchOffices> query = _db.Set<BranchOffices>();
 
                 if (!string.IsNullOrEmpty(name))
-                    query = query.Where(e => e.BranchOfficesName.Contains(name) || e.Description.Contains(name));
+                    query = query.Where(e => e.BranchOfficesName.Contains(name.ToLower().Trim()) || e.Description.Contains(name.ToLower().Trim()));
 
                 return query.AsNoTracking()
                              .ToList();

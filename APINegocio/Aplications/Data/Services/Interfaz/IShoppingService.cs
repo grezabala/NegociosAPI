@@ -9,15 +9,13 @@ namespace APINegocio.Aplications.Data.Services.Interfaz
         Task<Shopping> GetShoppingByIdAsync(int Id);
         Task<ICollection<Shopping>> GetShoppingByNameAsync(string names);
         Task<Shopping> GetShoppingByNumberShopping(int number);
-        Task<Shopping> GetShoppingByCodeAsync(string code);
+        Task<ICollection<Shopping>> GetShoppingByCodeAsync(string code);
         bool GetShoppingByIsDeleted(Shopping shopping);
         bool IsCread(Shopping cread);
         bool IsUpdated(Shopping shopping);
         bool IsExisteShoppingByName(string name);
         bool IsExisteShoppingByCode(string code);
-
         bool IsExisteShoppingById(int shoppingId);
-
         bool IsSave();
     }
 }

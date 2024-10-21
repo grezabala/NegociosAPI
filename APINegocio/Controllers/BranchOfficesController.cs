@@ -108,21 +108,22 @@ namespace APINegocio.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("{Id:int}", Name = "GetByBranchOfficeId")]
+        [HttpGet("{Id:int}"/*, Name = "GetByBranchOfficeId"*/)]
         [ResponseCache(CacheProfileName = "Default30Seg")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult GetByBranchOfficeId(int Id)
+        public IActionResult GetBranchOfficeById(int Id)
         {
             try
             {
                 var listId = _branchOfficesService.GetByBranchOfficeId(Id);
-                if (listId == null)
+                var listDto = _mapper.Map<BranchOfficesDto>(listId);
+
+                if (listDto == null)
                     return NotFound();
 
-                var listDto = _mapper.Map<BranchOfficesDto>(listId);
                 return Ok(listDto);
             }
             catch (Exception ex)
@@ -132,7 +133,7 @@ namespace APINegocio.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("{name}", Name = "GetByBranchOfficeName")]
+        [HttpGet("~/GetBranchOfficeByName"/*, Name = "GetByBranchOfficeName"*/)]
         [ResponseCache(CacheProfileName = "Default30Seg")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -146,7 +147,7 @@ namespace APINegocio.Controllers
                 if (list == null)
                     return NotFound();
 
-                var _getBranche = _mapper.Map<BranchOfficesDto>(list);
+                //var _getBranche = _mapper.Map<BranchOfficesDto>(list);
 
                 if (list.Any())
                     return Ok(list);
@@ -163,7 +164,7 @@ namespace APINegocio.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("{code}", Name = "GetByBranchOfficeCode")]
+        [HttpGet("code", Name = "GetByBranchOfficeCode")]
         [ResponseCache(CacheProfileName = "Default30Seg")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -177,7 +178,7 @@ namespace APINegocio.Controllers
                 if (list == null)
                     return NotFound();
 
-                // var listDto = _mapper.Map<BranchOfficesDto>(list);
+                //var listDto = _mapper.Map<BranchOfficesDto>(list);
                 if (list.Any())
                     return Ok(list);
 
@@ -232,29 +233,29 @@ namespace APINegocio.Controllers
             }
         }
 
-        [HttpPut("Id/{Id:int}")]
+        [HttpPut("{Id:int}")]
         [ProducesResponseType(201, Type = typeof(BranchOfficesPUTDto))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public IActionResult Put(int Id, [FromBody] BranchOfficesPUTDto model)
+        public IActionResult Put(int Id, [FromBody] BranchOfficesPUTDto modelDto)
         {
             try
             {
-                if (Id != model.BranchId)
+                if (Id != modelDto.BranchId)
                     return BadRequest("Error!");
 
-                var updated = _branchOfficesService.GetByBranchOfficeId(Id);
+                var _putBranch = _branchOfficesService.GetByBranchOfficeId(Id);
 
-                if (updated == null)
+                if (_putBranch == null)
                     return BadRequest();
 
-                _mapper.Map(model, updated);
+                _mapper.Map(modelDto, _putBranch);
 
                 if (!_branchOfficesService.IsSaveAll())
                     return NoContent();
 
-                return Ok(updated);
+                return Ok(_putBranch);
             }
             catch (Exception ex)
             {

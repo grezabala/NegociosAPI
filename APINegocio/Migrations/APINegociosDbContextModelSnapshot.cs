@@ -590,7 +590,7 @@ namespace APINegocio.Migrations
                         .IsUnicode(false)
                         .HasColumnType("int");
 
-                    b.Property<int?>("StorId")
+                    b.Property<int?>("StoresStorId")
                         .HasColumnType("int");
 
                     b.HasKey("InventoryId");
@@ -601,7 +601,7 @@ namespace APINegocio.Migrations
 
                     b.HasIndex("ShoppingId");
 
-                    b.HasIndex("StorId");
+                    b.HasIndex("StoresStorId");
 
                     b.ToTable("Inventory", (string)null);
                 });
@@ -1518,7 +1518,7 @@ namespace APINegocio.Migrations
 
                     b.HasOne("APINegocio.Aplications.Entities.Stores", "Stores")
                         .WithMany()
-                        .HasForeignKey("StorId");
+                        .HasForeignKey("StoresStorId");
 
                     b.Navigation("Proveedores");
 

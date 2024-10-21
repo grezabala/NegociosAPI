@@ -11,6 +11,8 @@
         public bool? IsRecurring { get; set; }
         public DateTime WhenDate { get; set; }
         public bool IsStatud { get; set; }
+        public int? ProveedoresProveedorId { get; set; }
+        public int? StoresStorId { get; set; }
     }
 
     public partial class CountriesPOSTDto

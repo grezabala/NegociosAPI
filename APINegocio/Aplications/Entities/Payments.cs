@@ -1,6 +1,6 @@
 ﻿namespace APINegocio.Aplications.Entities
 {
-    public class Payments
+    public partial class Payments
     {
         public int PaymentId { get; set; }
         public int OrderId { get; set; }

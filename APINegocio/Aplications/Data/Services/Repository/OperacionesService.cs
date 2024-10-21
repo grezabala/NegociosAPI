@@ -1,32 +1,33 @@
-﻿using APINegocio.Aplications.Data.Services.Interfaz;
+﻿using APINegocio.Aplications.Data.ContextDB;
+using APINegocio.Aplications.Data.Services.Interfaz;
 using APINegocio.Aplications.Dtos;
 using APINegocio.Aplications.Entities;
 using APINegocio.Aplications.Services.Interfaz.IContext;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace APINegocio.Aplications.Data.Services.Repository
 {
     public class OperacionesService : IOperacionesService
     {
-        public IAPINegocioDbContext _db { get; init; }
-        public IMapper _mapper { get; init; }
+        public readonly APINegociosDbContext _db;
+        public readonly IMapper _mapper;
 
-        public OperacionesService(IAPINegocioDbContext aPINegocioDbContext, IMapper mapper )
+        public OperacionesService(APINegociosDbContext aPINegocioDbContext, IMapper mapper)
         {
             _db = aPINegocioDbContext;
             _mapper = mapper;
         }
 
-        public OperacionesPOSTDto IsCread(OperacionesPOSTDto pOSTDto)
+        public ICollection<Operaciones> GetOperacionesByTipo(string tipo)
         {
             try
             {
-                if(pOSTDto == null)
-                    throw new ArgumentNullException("Error! El formulario esta vacio.");
+                IQueryable<Operaciones> query = _db.Set<Operaciones>();
+                query = query.Where(x => x.Tipo.Contains(tipo.ToLower().Trim()) || x.Tipo.Contains(tipo.ToLower().Trim()));
 
-                var operacion = _mapper.Map<Operaciones>(pOSTDto);
-                _db.Operaciones.Add(operacion);
-                return null;
+                return query.OrderBy(x => x.Tipo).ToList();
             }
             catch (Exception)
             {
@@ -35,24 +36,109 @@ namespace APINegocio.Aplications.Data.Services.Repository
             }
         }
 
-        public bool IsDeleted(OperacionesDto operacionesDto)
+        public Operaciones GetOperacionesDtoById(int Id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return _db.Set<Operaciones>().OrderBy(e => e.Tipo).FirstOrDefault(e => e.OperacionId == Id);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...!", ex);
+            }
         }
 
-        public OperacionesPUTDto IsUpdated(OperacionesPUTDto pUTDto)
+        public ICollection<Operaciones> GetOperacionesDtos()
         {
-            throw new NotImplementedException();
+            try
+            {
+                return _db.Set<Operaciones>().OrderBy(e => e.OperacionId).ToList();
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...!", ex);
+            }
         }
 
-        public ICollection<OperacionesDto> GetOperacionesDtos()
+        public Operaciones IsCread(Operaciones cread)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (cread != null)
+                {
+                    cread.IsUpdatedAt = null;
+                    cread.IsDeletedAt = null;
+                    cread.IsDeletedBy = false;
+                    cread.IsUpdatedBy = false;
+                    cread.IsStatu = true;
+                    cread.Fecha = DateTime.Now;
+
+                    _db.Set<Operaciones>().Add(cread);
+                    _db.SaveChanges();
+                }
+                throw new ArgumentNullException("El formulario se envio vacio.");
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...!", ex);
+            }
         }
 
-        public OperacionesDto GetOperacionesDtoById(int Id)
+        public bool IsDeleted(Operaciones operaciones)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var _deleted = GetOperacionesDtoById(operaciones.OperacionId);
+                if (operaciones != null)
+                {
+                    _deleted.IsDeletedBy = true;
+                    _deleted.IsDeletedAt = DateTime.Now;
+                    _deleted.IsStatu = false;
+
+                    _db.SaveChanges();
+
+                }
+
+                return _db.SaveChanges() > 0;
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...!", ex);
+            }
+        }
+
+        public Operaciones IsUpdated(Operaciones updated)
+        {
+            try
+            {
+                var _getUpdated = GetOperacionesDtoById(updated.OperacionId) ?? throw new ArgumentNullException("Error...! No se encontro el ID.");
+
+                _getUpdated.Tipo = updated.Tipo;
+                _getUpdated.Producto = updated.Producto;
+                _getUpdated.Stock = updated.Stock;
+                _getUpdated.Cantidad = updated.Cantidad;
+                _getUpdated.Fecha = updated.Fecha;
+
+                updated.IsStatu = true;
+                updated.IsDeletedAt = null;
+                updated.IsUpdatedAt = DateTime.Now;
+                updated.IsUpdatedBy = true;
+                updated.IsDeletedBy = false;
+
+                _db.Entry(_getUpdated).State = EntityState.Modified;
+                _db.SaveChanges();
+                return _getUpdated;
+
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error...!", ex);
+            }
         }
     }
 }

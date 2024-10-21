@@ -228,6 +228,9 @@ namespace APINegocio.Controllers
                 {
                     var postCustomer = _mapper.Map<Customers>(modelDto);
 
+                    postCustomer.CustomerCode = $"C-{new Random().Next()}";
+                    postCustomer.IsStatu = true;
+                    postCustomer.CreatedDate = DateTime.Now.AddDays(1);
                     _logiticaServices.Add(postCustomer);
 
                     if (await _logiticaServices.SaveAll())

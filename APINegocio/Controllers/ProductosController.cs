@@ -206,6 +206,14 @@ namespace APINegocio.API.Controllers
 
                 _mapper.Map(modelDto, updatedProducto);
 
+                updatedProducto.IsApproved = true;
+                updatedProducto.CreatedDate = updatedProducto.CreatedDate;
+                updatedProducto.IsApprovedAt = updatedProducto.IsApprovedAt;
+                updatedProducto.IsAsset = true;
+                updatedProducto.IsDeleted = false;
+                updatedProducto.IsModified = true;
+                updatedProducto.IsDateModified = DateTime.Now;
+
                 if (!await _repositoryService.SaveAll())
                     return NoContent();
 

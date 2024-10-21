@@ -191,7 +191,9 @@ namespace APINegocio.Aplications.Data.Services.Repository
                     cread.IsUpdatedAt = null;
                     cread.IsShipped = true;
                     cread.IsStatus = true;
-                    cread.StoresStorId = cread.StorId;
+                    cread.StoresStorId = new Random().Next();
+                    
+                    cread.DateCread = DateTime.Now;
 
                     _db.Add(cread);
                     return IsSaveAll();

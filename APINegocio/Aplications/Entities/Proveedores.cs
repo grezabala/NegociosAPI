@@ -1,6 +1,6 @@
 ﻿namespace APINegocio.Aplications.Entities
 {
-    public class Proveedores
+    public partial class Proveedores
     {
         public int ProveedorId { get; set; }
         public string ProveedorName { get; set; }

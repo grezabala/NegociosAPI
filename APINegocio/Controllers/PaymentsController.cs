@@ -170,6 +170,7 @@ namespace APINegocio.Controllers
                 addPayment.IsRefund = false;
                 addPayment.IsUpdated = false;
                 addPayment.IsUpdatedAt = null;
+                addPayment.Fecha = DateTime.Now;
 
                 _logisticaService.Add(addPayment);
 

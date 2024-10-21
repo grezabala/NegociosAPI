@@ -158,9 +158,15 @@ namespace APINegocio.API.Controllers
             {
                 var getCode = await _shoppingService.GetShoppingByCodeAsync(code);
 
-                var _getCodeDto = _mapper.Map<ShoppingDto>(getCode);
+                var _getCodeDto = new List<ShoppingDto>();
 
-                if (_getCodeDto is null)
+                foreach (var shopping in getCode)
+                {
+                    _getCodeDto.Add(_mapper.Map<ShoppingDto>(shopping));
+
+                }
+
+                if (_getCodeDto == null)
                     return NotFound("COMPRA NO ENCONTRADA" + "VERIFIQUE SI EL CODIGO ES VALIDO");
 
                 return Ok(_getCodeDto);

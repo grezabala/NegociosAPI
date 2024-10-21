@@ -16,6 +16,7 @@
         public bool IsModifiedPostalCode { get; set; }
         public bool IsModifiedSender { get; set; }
         public bool IsAsset { get; set; }
+        public virtual Orders Orders { get; set; }
 
     }
 }

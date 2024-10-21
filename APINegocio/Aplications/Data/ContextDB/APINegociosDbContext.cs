@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace APINegocio.Aplications.Data.ContextDB
 {
-    public partial class APINegociosDbContext :  IdentityDbContext<ApplicationUser>, IAPINegocioDbContext
+    public partial class APINegociosDbContext : IdentityDbContext<ApplicationUser>, IAPINegocioDbContext
     {
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public APINegociosDbContext(DbContextOptions<APINegociosDbContext> contextOptions)

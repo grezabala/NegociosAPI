@@ -153,6 +153,8 @@ namespace APINegocio.Controllers
                 if (modelDto != null)
                 {
                     var addCountry = _mapper.Map<Countries>(modelDto);
+
+                    addCountry.ProveedoresProveedorId = new Random().Next();
                     //_locationService.Add(addCountry);
 
                     if (!await _locationService.IsCread(addCountry))

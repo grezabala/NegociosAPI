@@ -149,7 +149,7 @@ namespace APINegocio.Aplications.Data.Services.Repository
                 if (!string.IsNullOrEmpty(names))
                     query = query.Where(x => x.CityName.Contains(names) || x.Code.Contains(names));
 
-                return await query.AsNoTracking().ToListAsync();
+                return await query.ToListAsync();
 
                 //if (names != null)
                 //{

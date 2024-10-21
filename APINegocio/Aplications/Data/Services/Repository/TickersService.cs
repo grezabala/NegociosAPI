@@ -283,10 +283,10 @@ namespace APINegocio.Aplications.Data.Services.Repository
             {
                 return _db.SaveChanges() >= 0 ? true : false;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                throw;
+                throw new Exception("Error....!", ex);
             }
         }
 
