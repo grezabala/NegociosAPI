@@ -38,10 +38,16 @@ namespace APINegocio.Controllers
                 }
 
                 var branchs = _branchOfficesService.GetByBranchOfficeId(branchId);
-
-                if (!_branchOfficesService.IsDeleted(branchs))
+                if (branchs == null || !branchs.Any())
                 {
-                    ModelState.AddModelError("", $"Error! Al eliminar la Marcha");
+                    return NoContent();
+                }
+
+                // Verifica si todos los elementos en la lista están eliminados
+                bool allDeleted = branchs.All(branch => _branchOfficesService.IsDeleted(branch));
+                if (!allDeleted)
+                {
+                    ModelState.AddModelError("", $"Error! Al eliminar la sucursal");
                     return StatusCode(500, ModelState);
                 }
 
@@ -80,32 +86,32 @@ namespace APINegocio.Controllers
             }
         }
 
-        [AllowAnonymous]
-        [HttpGet("~/GetByBranchOfficeIsDeleted")]
-        [ResponseCache(CacheProfileName = "Default30Seg")]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult GetByBranchOfficeIsDeleted(/*string _branchIsDeleted*/)
-        {
-            try
-            {
-                var _listIsDeleted = _branchOfficesService.GetByBranchOfficeIsDeleted(/*_branchIsDeleted*/);
-                var _listIsDeletedDto = new List<BranchOfficesDto>();
+        //[AllowAnonymous]
+        //[HttpGet("~/GetByBranchOfficeIsDeleted")]
+        //[ResponseCache(CacheProfileName = "Default30Seg")]
+        //[ProducesResponseType(StatusCodes.Status403Forbidden)]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //public IActionResult GetByBranchOfficeIsDeleted(/*string _branchIsDeleted*/)
+        //{
+        //    try
+        //    {
+        //        var _listIsDeleted = _branchOfficesService.GetByBranchOfficeIsDeleted(/*_branchIsDeleted*/);
+        //        var _listIsDeletedDto = new List<BranchOfficesDto>();
 
-                foreach (var _IsDeletedBranchas in _listIsDeleted)
-                {
-                    _listIsDeletedDto.Add(_mapper.Map<BranchOfficesDto>(_IsDeletedBranchas));
-                }
+        //        foreach (var _IsDeletedBranchas in _listIsDeleted)
+        //        {
+        //            _listIsDeletedDto.Add(_mapper.Map<BranchOfficesDto>(_IsDeletedBranchas));
+        //        }
 
-                return Ok(_listIsDeletedDto);
-            }
-            catch (Exception ex)
-            {
+        //        return Ok(_listIsDeletedDto);
+        //    }
+        //    catch (Exception ex)
+        //    {
 
-                throw new Exception("Error! No se encontro registro eliminado", ex);
-            }
+        //        throw new Exception("Error! No se encontro registro eliminado", ex);
+        //    }
 
-        }
+        //}
 
         [AllowAnonymous]
         [HttpGet("{Id:int}"/*, Name = "GetByBranchOfficeId"*/)]
@@ -119,7 +125,13 @@ namespace APINegocio.Controllers
             try
             {
                 var listId = _branchOfficesService.GetByBranchOfficeId(Id);
-                var listDto = _mapper.Map<BranchOfficesDto>(listId);
+                var listDto = new List<BranchOfficesDto>();
+
+                foreach (var branchOffices in listId)
+                {
+                    listDto.Add(_mapper.Map<BranchOfficesDto>(branchOffices));
+
+                }
 
                 if (listDto == null)
                     return NotFound();
@@ -242,20 +254,32 @@ namespace APINegocio.Controllers
         {
             try
             {
-                if (Id != modelDto.BranchId)
-                    return BadRequest("Error!");
+                if(!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                if(modelDto == null || Id != modelDto.BranchId)
+                    return BadRequest(ModelState);
+
+                //if (Id != modelDto.BranchId)
+                //    return BadRequest("Error!");
 
                 var _putBranch = _branchOfficesService.GetByBranchOfficeId(Id);
 
-                if (_putBranch == null)
-                    return BadRequest();
+                //if (_putBranch == null)
+                //    return BadRequest();
 
-                _mapper.Map(modelDto, _putBranch);
+              var branchOffice =  _mapper.Map<BranchOffices>(modelDto);
 
-                if (!_branchOfficesService.IsSaveAll())
-                    return NoContent();
+                if (!_branchOfficesService.IsUpdated(branchOffice))
+                {
+                    ModelState.AddModelError("", $"ERROR...!\t Al editar el registro {branchOffice.BranchOfficesName}");
+                    return StatusCode(500, ModelState);
+                
+                }
 
-                return Ok(_putBranch);
+                return NoContent();
+
+                //return Ok(_putBranch);
             }
             catch (Exception ex)
             {
@@ -263,5 +287,28 @@ namespace APINegocio.Controllers
                 throw new Exception("Updated.... Error!", ex);
             }
         }
+
+    /*
+     
+    {
+      "branchId": 1008,
+      "branchOfficesName": "Club Gonzales II",
+      "description": "Club Deportivo Manuel Gonzales",
+      "branchOfficesCode": "CLD-015GM",
+      "direccion": "Av. Independencia, C./ Marcia Medina. Edif. #23B",
+      "contacts": "829-735-9194",
+      "referencia": "Club Deportivo para todas las edades.",
+      "webSite": "clubdepoertivo.com",
+      "facebookAccount": "clubgonzales",
+      "instagramAccount": "clubgonzales",
+      "whatsAppNumber": "849-345-7654",
+      "phoneNumber": "829-994-4507",
+      "otherNumber": "849-848-9512",
+      "latitud": 59.98857,
+      "longitud": -60.16265,
+    }
+         
+    */
+
     }
 }

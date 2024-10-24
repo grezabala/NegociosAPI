@@ -22,7 +22,6 @@ namespace APINegocio.Controllers
             _mapper = mapper;
         }
 
-
         [AllowAnonymous]
         [HttpGet]
         [ResponseCache(CacheProfileName = "Default30Seg")]
@@ -95,21 +94,25 @@ namespace APINegocio.Controllers
             {
                 var getByNameStore = await _locationService.GetByNameStoresAsync(names);
 
-                var getByNameStoreDto = _mapper.Map<StoresDto>(getByNameStore);
+                var _getByNameStoreDto = new List<StoresDto>();
 
-                if (getByNameStoreDto == null)
+                foreach (var stores in getByNameStore)
+                {
+                    _getByNameStoreDto.Add(_mapper.Map<StoresDto>(stores));
+                }
+
+                if (_getByNameStoreDto == null)
                 {
                     return BadRequest("ERROR" + "EL NOMBRE QUE INGRESASTE NO SE ENCUENTRA REGISTRADO COMO TIENDA");
                 }
 
-                return Ok(getByNameStoreDto);
+                return Ok(_getByNameStoreDto);
             }
             catch (Exception ex)
             {
 
                 throw new Exception("Error...!", ex);
             }
-
 
         }
 
@@ -180,7 +183,7 @@ namespace APINegocio.Controllers
 
                 }
 
-                var addStor = _mapper.Map<Stores>(modelDto);
+                var addStor =  _mapper.Map<Stores>(modelDto);
 
                 if (!_locationService.IsCread(addStor)) 
                 {

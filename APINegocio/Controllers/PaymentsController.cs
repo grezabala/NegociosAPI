@@ -11,7 +11,7 @@ namespace APINegocio.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class PaymentsController : ControllerBase
     {
 
@@ -38,10 +38,10 @@ namespace APINegocio.Controllers
                 var _get = await _logisticaService.GetPayments();
                 var _getDtos = new List<PaymentsDto>();
 
-                foreach (var payments in _get) 
+                foreach (var payments in _get)
                 {
                     _getDtos.Add(_mapper.Map<PaymentsDto>(payments));
-                
+
                 }
 
                 return Ok(_getDtos);
@@ -107,10 +107,17 @@ namespace APINegocio.Controllers
             try
             {
                 var _get = await _logisticaService.GetPaymentsByCodeAsync(code);
-                if (_get == null)
-                    return BadRequest("ERROR!... EL PAGO QUE BUSCA NO SE HA REGISTRADO");
+                var listDto = new List<PaymentsDto>();
 
-                var listDto = _mapper.Map<PaymentsDto>(_get);
+                foreach (var payments in _get) 
+                {
+
+                    listDto.Add(_mapper.Map<PaymentsDto>(payments));
+                
+                }
+
+                if (listDto == null)
+                    return BadRequest("ERROR!... EL PAGO QUE BUSCA NO SE HA REGISTRADO");
 
                 return Ok(listDto);
             }
@@ -133,11 +140,19 @@ namespace APINegocio.Controllers
         {
             try
             {
-                var _get = await _logisticaService.GetPaymentsByToquenAsync(toquen);
-                if (_get == null)
-                    return BadRequest("ERROR!... EL PAGO QUE BUSCA NO SE HA REGISTRADO");
 
-                var listDto = _mapper.Map<PaymentsDto>(_get);
+                var _get = await _logisticaService.GetPaymentsByToquenAsync(toquen);
+                var listDto = new List<PaymentsDto>();
+
+                foreach (var payments in _get)
+                {
+
+                    listDto.Add(_mapper.Map<PaymentsDto>(payments));
+
+                }
+
+                if (listDto == null)
+                    return BadRequest("ERROR!... EL PAGO QUE BUSCA NO SE HA REGISTRADO");
 
                 return Ok(listDto);
             }
@@ -245,11 +260,11 @@ namespace APINegocio.Controllers
                 if (deleted == null)
                     return NotFound("ERROR!... EL PAGO QUE DESEA ELIMINAR NO FUE ENCONTRADO");
 
-                if (_logisticaService.GetByPaymentIsDeleted(deleted)) 
+                if (_logisticaService.GetByPaymentIsDeleted(deleted))
                 {
                     ModelState.AddModelError("", "Error...! No fue posible eliminar el pago");
                     StatusCode(500, ModelState);
-                
+
                 }
                 return NoContent();
             }

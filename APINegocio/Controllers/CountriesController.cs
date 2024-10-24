@@ -189,21 +189,23 @@ namespace APINegocio.Controllers
 
             try
             {
-                if (Id != modelDto.CountryId)
-                    return BadRequest("ERROR!... EL ID QUE ACABA DE INGRESAR NO COINCIDE CON NINGUN PAIS");
+               if(!ModelState.IsValid)
+                    return BadRequest(ModelState);    
+               
+               if(modelDto == null || Id != modelDto.CountryId)
+                    return BadRequest(ModelState);
 
+                var countriesDto = _mapper.Map<Countries>(modelDto);
 
-                var getByIdCountry = await _locationService.GetByIdCountriesAsync(Id);
+                if (!await _locationService.IsUpdated(countriesDto))
+                {
+                    ModelState.AddModelError("", $"Error! Al modificar el registro {countriesDto.CountryName}");
+                    return StatusCode(500, ModelState);
 
-                if (getByIdCountry == null)
-                    return BadRequest();
+                }
 
-                _mapper.Map(modelDto, getByIdCountry);
+                return NoContent();
 
-                if (await _locationService.IsUpdated(getByIdCountry))
-                    return NoContent();
-
-                return Ok(getByIdCountry);
             }
             catch (Exception ex)
             {

@@ -105,7 +105,7 @@ namespace APINegocio.Aplications.Data.Services.Repository
 
         public bool IsSaveAll()
         {
-           try
+            try
             {
                 return _db.SaveChanges() >= 0 ? true : false;
             }
@@ -123,12 +123,12 @@ namespace APINegocio.Aplications.Data.Services.Repository
                 //using (var _Db = _db) 
                 //{
                 // var entity = _Db.BranchOffices.Include(x => x.BranchId).SingleOrDefault(x => x.BranchId == )  
-                
+
                 //}
 
-                    //_db.Update(updatedBranchs);
+                //_db.Update(updatedBranchs);
 
-                    var _updatedBranchOffice = GetByBranchOfficeId(updatedBranchs.BranchId) ?? throw new ArgumentNullException("Error! El Id ingresado no esta registrado a ninguna Sucursal");
+                var _updatedBranchOffice = _db.Set<BranchOffices>().Find(updatedBranchs.BranchId) ?? throw new ArgumentNullException("Error! El Id ingresado no esta registrado a ninguna Sucursal");
 
                 ////_updatedBranchOffice.BranchId = updatedBranchs.BranchId;
                 _updatedBranchOffice.BranchOfficesName = updatedBranchs.BranchOfficesName;
@@ -200,19 +200,23 @@ namespace APINegocio.Aplications.Data.Services.Repository
             }
         }
 
-        public BranchOffices GetByBranchOfficeId(int Id)
+        public ICollection<BranchOffices> GetByBranchOfficeId(int Id)
         {
             try
             {
-                //return _db.Set<BranchOffices>().OrderBy(e => e.BranchOfficesName).FirstOrDefault();
-                var _getBranchId = _db.BranchOffices.Find(Id);
-                if (_getBranchId != null)
-                {
-                    return _db.BranchOffices.FirstOrDefault();
+                var branch = _db.Set<BranchOffices>()
+                     .Where(e => e.BranchId == Id)
+                     .OrderBy(e => e.BranchOfficesName)
+                     .ToList();
 
+                if (branch.Any())
+                {
+                    return branch;
                 }
 
-                return new BranchOffices();
+                return branch;
+
+                //return new List<BranchOffices>();
             }
             catch (Exception ex)
             {
@@ -248,7 +252,7 @@ namespace APINegocio.Aplications.Data.Services.Repository
             try
             {
                 return _db.Set<BranchOffices>()
-                     .Where(e => !e.IsDeletedBy)
+                     .Where(e => !e.IsStatud)
                      .OrderBy(e => e.BranchId)
                      .ToList();
             }

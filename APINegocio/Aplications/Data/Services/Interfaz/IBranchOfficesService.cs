@@ -8,7 +8,7 @@ namespace APINegocio.Aplications.Data.Services.Interfaz
         bool IsCread(BranchOffices creadBranchs);
         bool IsUpdated(BranchOffices updatedBranchs);
         ICollection<BranchOffices> GetBranchOffices();
-        BranchOffices GetByBranchOfficeId(int Id);
+        ICollection<BranchOffices> GetByBranchOfficeId(int Id);
         ICollection<BranchOffices> GetBranchOfficeByName(string name);
         ICollection<BranchOffices> GetByBranchOfficeCode(string code);
         ICollection<BranchOffices> GetByBranchOfficeIsDeleted(/*string branchDeleted*/);

@@ -29,15 +29,15 @@ namespace APINegocio.Aplications.Data.Services.Interfaz
         //Senders
         Task<IEnumerable<Senders>> GetSenders();
         Task<Senders> GetSendersByIdAsync(int Id);
-        Task<Senders> GetSendersByNameAsync(string names);
-        Task<Senders> GetSendersByCodeAsync(string code);
+        Task<ICollection<Senders>> GetSendersByNameAsync(string names);
+        Task<ICollection<Senders>> GetSendersByCodeAsync(string code);
         bool GetSenderByIsDeleted(Senders senders);
 
         //Payments
         Task<IEnumerable<Payments>> GetPayments();
         Task<Payments> GetPaymentsByIdAsync(int Id);
-        Task<Payments> GetPaymentsByToquenAsync(string toquen);
-        Task<Payments> GetPaymentsByCodeAsync(string code);
+        Task<ICollection<Payments>> GetPaymentsByToquenAsync(string toquen);
+        Task<ICollection<Payments>> GetPaymentsByCodeAsync(string code);
         bool GetByPaymentIsDeleted(Payments payments);
 
       

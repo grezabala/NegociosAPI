@@ -26,12 +26,12 @@ namespace APINegocio.Aplications.Data.Services.Interfaz
         bool GetByCountriesIsDeleted(Countries countries);
         Task<bool> IsUpdated(Countries countries);
         Task<bool> IsCread(Countries countries);
-       ICollection<Countries> GetCountriesByCode(string code);
+        ICollection<Countries> GetCountriesByCode(string code);
 
         //Stores
         Task<IEnumerable<Stores>> GetStores();
         Task<Stores> GetByIdStoresAsync(int Id);
-        Task<Stores> GetByNameStoresAsync(string names);
+        Task<ICollection<Stores>> GetByNameStoresAsync(string names);
         bool GetByStoreIsDeleted(Stores stores);
         bool IsExisteStoresById(int storesId);
         bool IsExisteStoresByName(string name);

@@ -71,16 +71,15 @@ namespace APINegocio.Aplications.Services.Repository
 
         }
 
-        public async Task<Productos> GetProductosByNameAsync(string names)
+        public async Task<ICollection<Productos>> GetProductosByNameAsync(string names)
         {
             try
             {
-                if (names != null)
-                {
-                    var getNameProducto = await _dbContext.Productos.FirstOrDefaultAsync(x => x.ProductName == names);
-                    return getNameProducto!;
-                }
-                throw new InvalidOperationException("Error...! No se indico el nombre del producto");
+               IQueryable<Productos> query = _dbContext.Set<Productos>().AsQueryable();
+                if (!string.IsNullOrEmpty(names))
+                    query = query.Where(x => x.ProductName.Contains(names.ToLower().Trim()) || x.ProductName.Contains(names.ToLower().Trim()));
+
+                return await query.OrderBy(x => x.Price).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -163,12 +162,17 @@ namespace APINegocio.Aplications.Services.Repository
 
         }
 
-        public async Task<Proveedores> GetProveedoresByNameAsync(string names)
+        public async Task<ICollection<Proveedores>> GetProveedoresByNameAsync(string names)
         {
             try
             {
-                var getNameProveedores = await _dbContext.Proveedores.FirstOrDefaultAsync(x => x.ProveedorName == names);
-                return getNameProveedores;
+                IQueryable<Proveedores> query = _dbContext.Set<Proveedores>();
+                if (!string.IsNullOrEmpty(names))
+                    query = query.Where(e => e.ProveedorName.Contains(names.Trim()) || e.ProveedorName.Contains(names.Trim()));
+
+                return await query
+                    .OrderBy(x => x.ProveedorName)
+                    .ToListAsync();
             }
             catch (Exception ex)
             {
@@ -188,7 +192,7 @@ namespace APINegocio.Aplications.Services.Repository
                     query = query.Where(e => e.ProveedorCode.Contains(code.Trim()) || e.ProveedorCode.Contains(code.Trim()));
 
                 return await query
-                    .AsNoTracking()
+                    .OrderBy(x => x.ProveedorName)
                     .ToListAsync();
 
             }

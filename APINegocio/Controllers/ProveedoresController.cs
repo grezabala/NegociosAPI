@@ -121,7 +121,14 @@ namespace APINegocio.API.Controllers
             {
                 var getNameProveedor = await _repo.GetProveedoresByNameAsync(names);
 
-                var _getNameProveedorDto = _mapper.Map<ProveedoresDto>(getNameProveedor);
+                var _getNameProveedorDto = new List<ProveedoresDto>();
+
+                foreach (var proveedores in getNameProveedor)
+                {
+                    _getNameProveedorDto.Add(_mapper.Map<ProveedoresDto>(proveedores));
+
+                }
+
                 if (_getNameProveedorDto == null)
                     return NotFound("ERROR!... EL PROVEEDOR NO FUE ENCONTRADO");
 
@@ -148,7 +155,14 @@ namespace APINegocio.API.Controllers
             {
                 var getCode = await _repo.GetByProveedorCodeAsync(code);
 
-                var _getCodeDto = _mapper.Map<ProveedoresDto>(getCode);
+                var _getCodeDto = new List<ProveedoresDto>();
+
+                foreach (var proveedores in getCode)
+                {
+
+                    _getCodeDto.Add(_mapper.Map<ProveedoresDto>(proveedores));
+
+                }
 
                 if (_getCodeDto == null)
                     return NotFound("ERROR!... EL PROVEEDOR NO FUE ENCONTRADO");

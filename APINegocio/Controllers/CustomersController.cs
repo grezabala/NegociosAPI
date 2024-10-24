@@ -257,19 +257,21 @@ namespace APINegocio.Controllers
 
             try
             {
-                if (Id != modelDto.CustomerId)
-                    return BadRequest("ERROR!... EL ID QUE HAZ INGRESADO NO EXISTE");
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
 
-                var putCustomer = await _logiticaServices.GetCustomersByIdAsync(modelDto.CustomerId!);
-                if (putCustomer is null)
-                    return BadRequest();
+                if(modelDto == null || Id != modelDto.CustomerId)
+                    return BadRequest(ModelState);
 
-                _mapper.Map(modelDto, putCustomer);
+                var customer = _mapper.Map<Customers>(modelDto);
 
-                if (!await _logiticaServices.SaveAll())
-                    return BadRequest("EL CLIENTE HAZ SIDO MODIFICADO CORRECTAMENTE");
+                if (!await _logiticaServices.IsUpdated(customer)) 
+                {
+                    ModelState.AddModelError("", $"Error! Al modificar el registro {customer.CustomerName}");
+                    return StatusCode(500, ModelState);
+                }
 
-                return Ok(putCustomer);
+                return NoContent();
             }
             catch (Exception ex)
             {

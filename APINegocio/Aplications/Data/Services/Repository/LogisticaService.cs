@@ -4,6 +4,7 @@ using APINegocio.Aplications.Entities;
 using APINegocio.Aplications.Services.Interfaz.IContext;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
+using static Azure.Core.HttpHeader;
 
 namespace APINegocio.Aplications.Services.Repository
 {
@@ -372,17 +373,15 @@ namespace APINegocio.Aplications.Services.Repository
 
         }
 
-        public async Task<Senders> GetSendersByNameAsync(string names)
+        public async Task<ICollection<Senders>> GetSendersByNameAsync(string names)
         {
             try
             {
-                if (names != null)
-                {
-                    var getSenderName = await _db.Senders.FirstOrDefaultAsync(x => x.SenderName == names);
-                    return getSenderName!;
+                IQueryable<Senders> query =  _db.Senders.AsQueryable();
+                if (!string.IsNullOrEmpty(names))
+                    query = query.Where(x => x.SenderName.Contains(names.ToLower().Trim()) || x.SenderName.Contains(names.ToLower().Trim()));
 
-                }
-                throw new InvalidOperationException("Error...! El nombre no fue ingresado.");
+                return await query.OrderBy(x => x.SenderName).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -393,17 +392,15 @@ namespace APINegocio.Aplications.Services.Repository
 
         }
 
-        public async Task<Senders> GetSendersByCodeAsync(string code)
+        public async Task<ICollection<Senders>> GetSendersByCodeAsync(string code)
         {
             try
             {
-                if (code != null)
-                {
+                IQueryable<Senders> query = _db.Senders.AsQueryable();
+                if (!string.IsNullOrEmpty(code))
+                    query = query.Where(x => x.SenderCode.Contains(code.ToLower().Trim()) || x.SenderCode.Contains(code.ToLower().Trim()));
 
-                    var getSenderCode = await _db.Senders.FirstOrDefaultAsync(x => x.SenderCode == code);
-                    return getSenderCode!;
-                }
-                throw new InvalidOperationException("Error...! El código no fue ingresado.");
+                return await query.OrderBy(x => x.SenderName).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -475,17 +472,15 @@ namespace APINegocio.Aplications.Services.Repository
 
         }
 
-        public async Task<Payments> GetPaymentsByToquenAsync(string toquen)
+        public async Task<ICollection<Payments>> GetPaymentsByToquenAsync(string toquen)
         {
             try
             {
-                if (toquen != null)
-                {
-                    var getByIdToquen = await _db.Payments.FirstOrDefaultAsync(x => x.Toquen == toquen);
-                    return getByIdToquen!;
+                IQueryable<Payments> query = _db.Payments.AsQueryable();
+                if (!string.IsNullOrEmpty(toquen))
+                    query = query.Where(e => e.Toquen.Contains(toquen.ToLower().Trim()) || e.Toquen.Contains(toquen.ToLower().Trim()));
 
-                }
-                throw new InvalidOperationException("No fue posible a mostrar el pago por el toquen");
+                return await query.OrderBy(e => e.OrderId).ToListAsync();
 
             }
             catch (Exception ex)
@@ -495,17 +490,15 @@ namespace APINegocio.Aplications.Services.Repository
             }
 
         }
-        public async Task<Payments> GetPaymentsByCodeAsync(string code)
+        public async Task<ICollection<Payments>> GetPaymentsByCodeAsync(string code)
         {
             try
             {
-                if (code != null)
-                {
-                    var _get = await _db.Set<Payments>().OrderBy(e => e.PaymentCode).FirstOrDefaultAsync(e => e.PaymentCode == code);
-                    return _get;
+                IQueryable<Payments> query = _db.Payments.AsQueryable();
+                if (!string.IsNullOrEmpty(code))
+                    query = query.Where(e => e.PaymentCode.Contains(code.ToLower().Trim()) || e.PaymentCode.Contains(code.ToLower().Trim()));
 
-                }
-                throw new InvalidOperationException("Error...! No sé encontro ningún pago");
+                return await query.OrderBy(e => e.OrderId).ToListAsync();
             }
             catch (Exception ex)
             {

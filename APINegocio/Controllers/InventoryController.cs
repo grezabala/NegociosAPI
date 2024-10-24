@@ -233,20 +233,22 @@ namespace APINegocio.Controllers
         {
             try
             {
-                if (Id != pUTDto.InventoryId)
-                    return BadRequest("ERROR!... EL ID QUE ACABA DE INGRESAR NO COINCIDE CON NINGUN INVENTARIO");
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
 
-                var getInventario = await _inventoryService.GetByInventoryId(pUTDto.InventoryId);
+                if (pUTDto == null || Id != pUTDto.InventoryId)
+                    return BadRequest(ModelState);
 
-                if (getInventario is null)
-                    return BadRequest("NO SE ENCONTRO NINGUN INVENTARIO");
+                var inventoryDto = _mapper.Map<Inventory>(pUTDto);
 
-                _mapper.Map(pUTDto, getInventario);
+                if (!await _inventoryService.IsUpdated(inventoryDto)) 
+                {
+                    ModelState.AddModelError("", $"Error! Al modificar el registro {inventoryDto.InventoryName}");
+                    return StatusCode(500, ModelState);
 
-                if (!_inventoryService.IsSaveAll())
-                    return NoContent();
+                }
 
-                return Ok(getInventario);
+                return NoContent();
             }
             catch (Exception ex)
             {

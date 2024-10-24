@@ -154,7 +154,7 @@ namespace APINegocio.Controllers
 
         // PUT api/<CityController>/5
         //[Authorize]
-        [HttpPut("{Id}")]
+        [HttpPut("{Id:int}")]
         [ProducesResponseType(201, Type = typeof(CityPUTDto))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -162,20 +162,32 @@ namespace APINegocio.Controllers
 
         public async Task<IActionResult> Put(int Id, [FromBody] CityPUTDto modelDto)
         {
-            if (Id != modelDto.CityId)
-                return BadRequest("ERROR!... EL ID QUE ACABA DE INGRESAR NO COINCIDE CON NINGUNA CIUDAD");
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
 
-            var updateCity = await _locationService.GetByIdCityAsync((int)modelDto.CityId);
+                if (modelDto == null || Id != modelDto.CityId)
+                    return BadRequest(ModelState);
 
-            if (updateCity == null)
-                return BadRequest();
+                var cityDto = _mapper.Map<City>(modelDto);
 
-            _mapper.Map(modelDto, updateCity);
+                if (!await _locationService.IsUpdated(cityDto))
+                {
+                    ModelState.AddModelError("", $"Error! Al modificar el registro {cityDto.CityId}");
+                    return StatusCode(500, ModelState);
 
-            if (await _locationService.IsUpdated(updateCity))
+                }
+
                 return NoContent();
+            }
+            catch (Exception ex)
+            {
 
-            return Ok(updateCity);
+                throw new Exception("Error...!", ex);
+            }
+
+
         }
 
         // DELETE api/<CityController>/5

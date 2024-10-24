@@ -17,11 +17,11 @@ namespace APINegocio.Aplications.Data.Interfaz
         //Productos
         Task<IEnumerable<Productos>> GetProductos();
         Task<Productos> GetProductosByIdAsync(int Id);
-        Task<Productos> GetProductosByNameAsync(string names);
+        Task<ICollection<Productos>> GetProductosByNameAsync(string names);
         bool GetProductosByDeleted(Productos productos);
 
         //Parte proveedores
-        Task<Proveedores> GetProveedoresByNameAsync(string names);
+        Task<ICollection<Proveedores>> GetProveedoresByNameAsync(string names);
         Task<IEnumerable<Proveedores>> GetProveedores();
         Task<Proveedores> GetProveedoresByIdAsync(int Id);
         Task<ICollection< Proveedores>> GetByProveedorCodeAsync(string code);

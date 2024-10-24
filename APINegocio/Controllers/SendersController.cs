@@ -147,7 +147,14 @@ namespace APINegocio.API.Controllers
             {
                 var getName = await _logisticaService.GetSendersByNameAsync(nombre);
 
-                var getNameDto = _mapper.Map<SendersDto>(getName);
+                var getNameDto = new List<SendersDto>();
+
+                foreach (var senders in getName)
+                {
+                    getNameDto.Add(_mapper.Map<SendersDto>(senders));
+                }
+
+                
                 if (getNameDto == null)
                 {
                     return NoContent();
@@ -213,7 +220,14 @@ namespace APINegocio.API.Controllers
             try
             {
                 var getCode = await _logisticaService.GetSendersByCodeAsync(code);
-                var _getCodeDto = _mapper.Map<SendersDto>(getCode);
+                var _getCodeDto = new List<SendersDto>();
+
+                foreach (var senders in getCode)
+                {
+                    _getCodeDto.Add(_mapper.Map<SendersDto>(senders));
+                }
+
+                
                 if (_getCodeDto == null)
                 {
                     return NoContent();

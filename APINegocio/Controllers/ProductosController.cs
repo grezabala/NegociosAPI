@@ -123,7 +123,14 @@ namespace APINegocio.API.Controllers
             {
                 var getName = await _repositoryService.GetProductosByNameAsync(nombre);
 
-                var _getNameDto = _mapper.Map<ProductosDto>(getName);
+                var _getNameDto = new List<ProductosDto>();
+
+                foreach (var productos in getName) 
+                {
+
+                    _getNameDto.Add(_mapper.Map<ProductosDto>(productos));
+                
+                }
 
                 if (_getNameDto == null)
                     return NotFound("ERROR!... EL PRODUCTO NO FUE ENCONTRADO");

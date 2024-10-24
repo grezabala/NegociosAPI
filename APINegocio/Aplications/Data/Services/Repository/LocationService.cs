@@ -351,7 +351,7 @@ namespace APINegocio.Aplications.Data.Services.Repository
                 if (!string.IsNullOrEmpty(code))
                     query = query.Where(x => x.CodeCountries.ToLower().Trim() == code.ToLower().Trim());
 
-                return  query.OrderBy(x => x.CountryName).AsNoTracking().ToList();
+                return query.OrderBy(x => x.CountryName).AsNoTracking().ToList();
             }
             catch (Exception ex)
             {
@@ -383,16 +383,15 @@ namespace APINegocio.Aplications.Data.Services.Repository
 
         }
 
-        public async Task<Stores> GetByNameStoresAsync(string names)
+        public async Task<ICollection<Stores>> GetByNameStoresAsync(string names)
         {
             try
             {
-                if (names != null)
-                {
+                IQueryable<Stores> query = _aPINegociosDb.Stores.AsQueryable();
+                if (!string.IsNullOrEmpty(names))
+                    query = query.Where(x => x.StoresName.Contains(names.ToLower().Trim()) || x.StoresName.Contains(names.ToLower().Trim()));
 
-                    return await _aPINegociosDb.Set<Stores>().OrderBy(e => e.StoresName).FirstOrDefaultAsync(x => x.StoresName == names);
-                }
-                throw new InvalidOperationException("Error...! No se indico el nombre de la tienda.");
+                return await query.OrderBy(x => x.StoresName).ToListAsync();
 
             }
             catch (Exception ex)
